@@ -1,0 +1,109 @@
+import type { IUserRepository } from "../../../domain/repositories/IUserRepository.js";
+
+import type { IRefreshTokenSessionRepository } from "../../../domain/repositories/IRefreshTokenSessionRepository.js";
+
+import { RefreshTokenSession } from "../../../domain/entities/RefreshTokenSession.js";
+
+import type { IPasswordHasher } from "../../services/auth/IPasswordHasher.js";
+import type { ITokenService } from "../../services/auth/ITokenService.js";
+
+import type { LoginUserInput } from "../../dto/auth/LoginUserInput.js";
+
+import { UnauthorizedError } from "../../../shared/errors/UnauthorizedError.js";
+
+import type { ILogger } from "../../../shared/logging/ILogger.js";
+
+import type { RequestContext } from "../../context/RequestContext.js";
+import { randomUUID } from "node:crypto";
+
+export interface LoginUserResult {
+  accessToken: string;
+  refreshToken: string;
+}
+
+export class LoginUserUseCase {
+  constructor(
+    private readonly userRepository: IUserRepository,
+    private readonly passwordHasher: IPasswordHasher,
+    private readonly tokenService: ITokenService,
+    private readonly refreshTokenSessionRepository: IRefreshTokenSessionRepository,
+    private readonly logger: ILogger,
+  ) {}
+
+  async execute(input: LoginUserInput,context: RequestContext,): Promise<LoginUserResult> {
+    this.logger.info("User login attempt", {
+      email: input.email,
+      ipAddress: context.ipAddress,
+    });
+
+    const user = await this.userRepository.findByEmail(input.email);
+
+    if (!user) {
+      this.logger.warn("Login failed: invalid credentials", {
+        email: input.email,
+      });
+
+      throw new UnauthorizedError("Invalid email or password");
+    }
+
+    const passwordValid = await this.passwordHasher.verify(
+      input.password,
+      user.getPasswordHash(),
+    );
+
+    if (!passwordValid) {
+      this.logger.warn("Login failed: invalid credentials", {
+        userId: user.getId(),
+      });
+
+      throw new UnauthorizedError("Invalid email or password");
+    }
+
+    const tokenId = randomUUID();
+
+    const accessToken = await this.tokenService.generateAccessToken({
+      userId: user.getId(),
+    });
+
+    const generatedRefreshToken = await this.tokenService.generateRefreshToken({
+      userId: user.getId(),
+      tokenId,
+    });
+
+    const now = new Date();
+
+    const session = new RefreshTokenSession({
+      id: randomUUID(),
+
+      tokenId: generatedRefreshToken.tokenId,
+
+      userId: user.getId(),
+
+      expiresAt: generatedRefreshToken.expiresAt,
+
+      revokedAt: null,
+
+      replacedByTokenId: null,
+
+      deviceInfo: context.deviceInfo,
+
+      ipAddress: context.ipAddress,
+
+      createdAt: now,
+
+      updatedAt: now,
+    });
+
+    await this.refreshTokenSessionRepository.save(session);
+
+    this.logger.info("User logged in successfully", {
+      userId: user.getId(),
+      tokenId,
+    });
+
+    return {
+      accessToken,
+      refreshToken: generatedRefreshToken.token,
+    };
+  }
+}

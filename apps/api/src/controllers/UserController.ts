@@ -5,12 +5,12 @@ import {
   type CreateUserInput,
 } from "../../../../src/application/validation/users/createUserSchema.js";
 
-import type { CreateUserUseCase } from "../../../../src/application/use-cases/users/CreateUserUseCase.js";
+import type { RegisterUserUseCase } from "../../../../src/application/use-cases/auth/RegisterUserUseCase.js";
 
 import { ValidationError } from "../../../../src/shared/errors/ValidationError.js";
 
 export class UserController {
-  constructor(private readonly createUserUseCase: CreateUserUseCase) {}
+  constructor(private readonly createUserUseCase: RegisterUserUseCase) {}
 
   async create(request: FastifyRequest, reply: FastifyReply) {
     const result = createUserSchema.safeParse(request.body);

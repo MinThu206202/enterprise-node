@@ -1,0 +1,11 @@
+import type { RefreshTokenSession } from "../entities/RefreshTokenSession.js";
+
+export interface IRefreshTokenSessionRepository {
+  findByTokenId(tokenId: string): Promise<RefreshTokenSession | null>;
+
+  save(session: RefreshTokenSession): Promise<RefreshTokenSession>;
+
+  revoke(tokenId: string): Promise<void>;
+
+  replace(tokenId: string, replacedByTokenId: string): Promise<void>;
+}

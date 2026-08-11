@@ -12,6 +12,14 @@ const envSchema = z.object({
   LOG_LEVEL: z
     .enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"])
     .default("info"),
+
+  JWT_ACCESS_SECRET: z.string().min(32),
+
+  JWT_REFRESH_SECRET: z.string().min(32),
+
+  JWT_ACCESS_EXPIRES_IN: z.string().default("15m"),
+
+  JWT_REFRESH_EXPIRES_IN: z.string().default("7d"),
 });
 
 const result = envSchema.safeParse(process.env);

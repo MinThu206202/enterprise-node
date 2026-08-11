@@ -43,6 +43,7 @@ export class PrismaUserRepository implements IUserRepository {
         id: user.getId(),
         email: user.getEmail(),
         name: user.getName(),
+        passwordHash: user.getPasswordHash(),
         createdAt: user.getCreatedAt(),
         updatedAt: user.getUpdatedAt(),
       },
@@ -50,6 +51,7 @@ export class PrismaUserRepository implements IUserRepository {
       update: {
         email: user.getEmail(),
         name: user.getName(),
+        passwordHash: user.getPasswordHash(),
         updatedAt: user.getUpdatedAt(),
       },
     });
@@ -69,13 +71,19 @@ export class PrismaUserRepository implements IUserRepository {
     id: string;
     email: string;
     name: string;
+    passwordHash: string | null;
     createdAt: Date;
     updatedAt: Date;
   }): User {
+    if (!record.passwordHash) {
+      throw new Error(`User ${record.id} does not have a password hash`);
+    }
+
     return new User({
       id: record.id,
       email: record.email,
       name: record.name,
+      passwordHash: record.passwordHash,
       createdAt: record.createdAt,
       updatedAt: record.updatedAt,
     });
