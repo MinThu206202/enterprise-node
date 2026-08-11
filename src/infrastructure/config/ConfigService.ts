@@ -17,6 +17,30 @@ export class ConfigService {
     return env.LOG_LEVEL;
   }
 
+  // -------------------------
+  // Authentication
+  // -------------------------
+
+  get jwtAccessSecret() {
+    return env.JWT_ACCESS_SECRET;
+  }
+
+  get jwtRefreshSecret() {
+    return env.JWT_REFRESH_SECRET;
+  }
+
+  get jwtAccessExpiresIn() {
+    return env.JWT_ACCESS_EXPIRES_IN;
+  }
+
+  get jwtRefreshExpiresIn() {
+    return env.JWT_REFRESH_EXPIRES_IN;
+  }
+
+  // -------------------------
+  // Environment
+  // -------------------------
+
   get isProduction() {
     return env.NODE_ENV === "production";
   }

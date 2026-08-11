@@ -1,12 +1,13 @@
 import { createApp } from "./app.js";
-import { config } from "./container.js";
 
 const app = createApp();
 
 const start = async (): Promise<void> => {
   try {
+    const port = Number(process.env.PORT ?? 3000);
+
     await app.listen({
-      port: config.port,
+      port,
       host: "0.0.0.0",
     });
   } catch (error) {

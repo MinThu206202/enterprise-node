@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "users" ADD COLUMN     "passwordHash" TEXT,
+ALTER COLUMN "createdAt" SET DEFAULT CURRENT_TIMESTAMP;

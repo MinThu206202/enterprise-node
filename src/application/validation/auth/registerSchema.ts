@@ -1,9 +1,7 @@
 import { z } from "zod";
 
-export const createUserSchema = z.object({
-  email: z
-    .string()
-    .email("Invalid email address"),
+export const registerSchema = z.object({
+  email: z.string().email("Invalid email address"),
 
   name: z
     .string()
@@ -13,7 +11,7 @@ export const createUserSchema = z.object({
   password: z
     .string()
     .min(8, "Password must contain at least 8 characters")
-    .max(100, "Password must not exceed 100 characters"),
+    .max(128, "Password must not exceed 128 characters"),
 });
 
-export type CreateUserInput = z.infer<typeof createUserSchema>;
+export type RegisterInput = z.infer<typeof registerSchema>;

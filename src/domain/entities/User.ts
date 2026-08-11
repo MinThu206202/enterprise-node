@@ -2,47 +2,35 @@ export interface UserProps {
   id: string;
   email: string;
   name: string;
+  passwordHash: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
 export class User {
-  private readonly id: string;
-  private email: string;
-  private name: string;
-  private readonly createdAt: Date;
-  private updatedAt: Date;
+  constructor(private readonly props: UserProps) {}
 
-  constructor(props: UserProps) {
-    this.id = props.id;
-    this.email = props.email;
-    this.name = props.name;
-    this.createdAt = props.createdAt;
-    this.updatedAt = props.updatedAt;
+  getId(): string {
+    return this.props.id;
   }
 
-  public getId(): string {
-    return this.id;
+  getEmail(): string {
+    return this.props.email;
   }
 
-  public getEmail(): string {
-    return this.email;
+  getName(): string {
+    return this.props.name;
   }
 
-  public getName(): string {
-    return this.name;
+  getPasswordHash(): string {
+    return this.props.passwordHash;
   }
 
-  public getCreatedAt(): Date {
-    return this.createdAt;
+  getCreatedAt(): Date {
+    return this.props.createdAt;
   }
 
-  public getUpdatedAt(): Date {
-    return this.updatedAt;
-  }
-
-  public updateName(name: string): void {
-    this.name = name;
-    this.updatedAt = new Date();
+  getUpdatedAt(): Date {
+    return this.props.updatedAt;
   }
 }

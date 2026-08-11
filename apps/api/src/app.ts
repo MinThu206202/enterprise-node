@@ -1,7 +1,7 @@
 import Fastify, { type FastifyInstance } from "fastify";
 
 import { registerErrorHandler } from "./plugins/errorHandler.js";
-import { userRoutes } from "./routes/userRoutes.js";
+import { authRoutes } from "./routes/authRoutes.js";
 
 export function createApp(): FastifyInstance {
   const app = Fastify({
@@ -17,7 +17,7 @@ export function createApp(): FastifyInstance {
     };
   });
 
-  app.register(userRoutes);
+  app.register(authRoutes);
 
   return app;
 }
