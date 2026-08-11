@@ -10,10 +10,11 @@ import { RegisterUserUseCase } from "../../../src/application/use-cases/auth/Reg
 import { LoginUserUseCase } from "../../../src/application/use-cases/auth/LoginUserUseCase.js";
 
 import { ConfigService } from "../../../src/infrastructure/config/ConfigService.js";
+import { LogoutUseCase } from "../../../src/application/use-cases/auth/LogoutUseCase.js";
 
 import { JwtTokenService } from "../../../src/infrastructure/security/JwtTokenService.js";
 import { RefreshTokenUseCase } from "../../../src/application/use-cases/auth/RefreshTokenUseCase.js";
-
+import { GetCurrentUserUseCase } from "../../../src/application/use-cases/users/GetCurrentUserUseCase.js";
 
 const configService = new ConfigService();
 const tokenService = new JwtTokenService(configService);
@@ -51,6 +52,14 @@ const registerUserUseCase = new RegisterUserUseCase(
   appLogger,
 );
 
+const logoutUseCase = new LogoutUseCase(
+  tokenService,
+  refreshTokenSessionRepository,
+  logger,
+);
+
+const getCurrentUserUseCase = new GetCurrentUserUseCase(userRepository, logger);
+
 export const container = {
   userRepository,
 
@@ -64,5 +73,7 @@ export const container = {
   loginUserUseCase,
   registerUserUseCase,
   refreshTokenSessionRepository,
-  refreshTokenUseCase
+  refreshTokenUseCase,
+  logoutUseCase,
+  getCurrentUserUseCase,
 };

@@ -11,6 +11,7 @@ import {
 } from "../../../../src/application/validation/auth/loginSchema.js";
 
 import type { LoginUserUseCase } from "../../../../src/application/use-cases/auth/LoginUserUseCase.js";
+import type { LogoutUseCase } from "../../../../src/application/use-cases/auth/LogoutUseCase.js";
 
 import type { RegisterUserUseCase } from "../../../../src/application/use-cases/auth/RegisterUserUseCase.js";
 
@@ -22,6 +23,7 @@ export class AuthController {
     private readonly registerUserUseCase: RegisterUserUseCase,
     private readonly loginUserUseCase: LoginUserUseCase,
     private readonly refreshTokenUseCase: RefreshTokenUseCase,
+    private readonly logoutUseCase: LogoutUseCase,
   ) {}
 
   async register(
@@ -85,5 +87,20 @@ export class AuthController {
     });
 
     return reply.status(200).send(result);
+  }
+  async logout(request: FastifyRequest, reply: FastifyReply) {
+    const body = request.body as {
+      refreshToken?: string;
+    };
+
+    if (!body.refreshToken) {
+      throw new ValidationError("Refresh token is required");
+    }
+
+    await this.logoutUseCase.execute({
+      refreshToken: body.refreshToken,
+    });
+
+    return reply.status(204).send();
   }
 }
