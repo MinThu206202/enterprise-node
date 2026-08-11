@@ -11,6 +11,7 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
     container.registerUserUseCase,
     container.loginUserUseCase,
     container.refreshTokenUseCase,
+    container.logoutUseCase,
   );
 
   app.post<{ Body: RegisterInput }>(
@@ -26,5 +27,9 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
 
   app.post("/auth/refresh", async (request, reply) => {
     return controller.refresh(request, reply);
+  });
+
+  app.post("/auth/logout", async (request, reply) => {
+    return controller.logout(request, reply);
   });
 }

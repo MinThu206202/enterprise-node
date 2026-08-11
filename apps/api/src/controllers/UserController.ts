@@ -1,16 +1,20 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 
-import {
-  createUserSchema,
-  type CreateUserInput,
-} from "../../../../src/application/validation/users/createUserSchema.js";
+import { createUserSchema } from "../../../../src/application/validation/users/createUserSchema.js";
 
 import type { RegisterUserUseCase } from "../../../../src/application/use-cases/auth/RegisterUserUseCase.js";
 
+import type { GetCurrentUserUseCase } from "../../../../src/application/use-cases/users/GetCurrentUserUseCase.js";
+
 import { ValidationError } from "../../../../src/shared/errors/ValidationError.js";
 
+import { UserMapper } from "../../../../src/application/mappers/UserMapper.js";
+
 export class UserController {
-  constructor(private readonly createUserUseCase: RegisterUserUseCase) {}
+  constructor(
+    private readonly createUserUseCase: RegisterUserUseCase,
+    private readonly getCurrentUserUseCase: GetCurrentUserUseCase,
+  ) {}
 
   async create(request: FastifyRequest, reply: FastifyReply) {
     const result = createUserSchema.safeParse(request.body);
@@ -21,16 +25,14 @@ export class UserController {
       );
     }
 
-    const input: CreateUserInput = result.data;
+    const user = await this.createUserUseCase.execute(result.data);
 
-    const user = await this.createUserUseCase.execute(input);
+    return reply.status(201).send(UserMapper.toResponse(user));
+  }
 
-    return reply.status(201).send({
-      id: user.getId(),
-      email: user.getEmail(),
-      name: user.getName(),
-      createdAt: user.getCreatedAt(),
-      updatedAt: user.getUpdatedAt(),
-    });
+  async getMe(request: FastifyRequest, reply: FastifyReply) {
+    const user = await this.getCurrentUserUseCase.execute(request.userId!);
+
+    return reply.status(200).send(UserMapper.toResponse(user));
   }
 }

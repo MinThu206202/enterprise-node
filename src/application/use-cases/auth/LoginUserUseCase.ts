@@ -30,7 +30,10 @@ export class LoginUserUseCase {
     private readonly logger: ILogger,
   ) {}
 
-  async execute(input: LoginUserInput,context: RequestContext,): Promise<LoginUserResult> {
+  async execute(
+    input: LoginUserInput,
+    context: RequestContext,
+  ): Promise<LoginUserResult> {
     this.logger.info("User login attempt", {
       email: input.email,
       ipAddress: context.ipAddress,
@@ -59,17 +62,16 @@ export class LoginUserUseCase {
       throw new UnauthorizedError("Invalid email or password");
     }
 
-    const tokenId = randomUUID();
-
     const accessToken = await this.tokenService.generateAccessToken({
       userId: user.getId(),
     });
+
+    const tokenId = randomUUID();
 
     const generatedRefreshToken = await this.tokenService.generateRefreshToken({
       userId: user.getId(),
       tokenId,
     });
-
     const now = new Date();
 
     const session = new RefreshTokenSession({
