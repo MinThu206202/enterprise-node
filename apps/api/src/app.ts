@@ -4,6 +4,8 @@ import { registerErrorHandler } from "./plugins/errorHandler.js";
 import { requestMetaPlugin } from "./plugins/requestMeta.js";
 import { responseMetaPlugin } from "./plugins/responseMeta.js";
 import { registerRateLimit } from "./plugins/rateLimit.js";
+import { registerSecurity } from "./plugins/security.js";
+import { registerCors } from "./plugins/cors.js";
 
 import { userRoutes } from "./routes/v1/userRoutes.js";
 import { authRoutes } from "./routes/v1/authRoutes.js";
@@ -17,10 +19,19 @@ export function createApp(): FastifyInstance {
 
   registerErrorHandler(app);
 
+  // Request metadata
   app.register(requestMetaPlugin);
 
+  // Response metadata
   app.register(responseMetaPlugin);
 
+  // Security headers
+  app.register(registerSecurity);
+
+  // CORS
+  app.register(registerCors);
+
+  // Rate limiting
   app.register(registerRateLimit);
 
   app.get("/health", async () => {
