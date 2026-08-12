@@ -14,22 +14,67 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
     container.logoutUseCase,
   );
 
+  // Register
   app.post<{ Body: RegisterInput }>(
     "/auth/register",
+    {
+      config: {
+        rateLimit: {
+          max: 5,
+          timeWindow: "1 minute",
+        },
+      },
+    },
     async (request, reply) => {
       return controller.register(request, reply);
     },
   );
 
-  app.post<{ Body: LoginInput }>("/auth/login", async (request, reply) => {
-    return controller.login(request, reply);
-  });
+  // Login
+  app.post<{ Body: LoginInput }>(
+    "/auth/login",
+    {
+      config: {
+        rateLimit: {
+          max: 5,
+          timeWindow: "1 minute",
+        },
+      },
+    },
+    async (request, reply) => {
+      return controller.login(request, reply);
+    },
+  );
 
-  app.post("/auth/refresh", async (request, reply) => {
-    return controller.refresh(request, reply);
-  });
+  // Refresh
+  app.post(
+    "/auth/refresh",
+    {
+      config: {
+        rateLimit: {
+          max: 10,
+          timeWindow: "1 minute",
+        },
+      },
+    },
+    async (request, reply) => {
+      return controller.refresh(request, reply);
+    },
+  );
 
-  app.post("/auth/logout", async (request, reply) => {
-    return controller.logout(request, reply);
-  });
+  // Logout
+  app.post(
+    "/auth/logout",
+    {
+      config: {
+        rateLimit: {
+          max: 20,
+          timeWindow: "1 minute",
+        },
+      },
+    },
+    async (request, reply) => {
+      return controller.logout(request, reply);
+    },
+  );
 }
