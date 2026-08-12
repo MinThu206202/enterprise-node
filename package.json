@@ -27,6 +27,8 @@
     "typescript": "^7.0.2"
   },
   "dependencies": {
+    "@fastify/cors": "^11.3.0",
+    "@fastify/helmet": "^13.1.0",
     "@fastify/rate-limit": "^11.2.0",
     "@prisma/adapter-pg": "^7.9.1",
     "@prisma/client": "^7.9.1",
