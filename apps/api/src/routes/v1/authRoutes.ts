@@ -1,10 +1,10 @@
 import type { FastifyInstance } from "fastify";
 
-import { container } from "../container.js";
-import { AuthController } from "../controllers/AuthController.js";
+import { container } from "../../container.js";
+import { AuthController } from "../../controllers/AuthController.js";
 
-import type { RegisterInput } from "../../../../src/application/validation/auth/registerSchema.js";
-import type { LoginInput } from "../../../../src/application/validation/auth/loginSchema.js";
+import type { RegisterInput } from "../../../../../src/application/validation/auth/registerSchema.js";
+import type { LoginInput } from "../../../../../src/application/validation/auth/loginSchema.js";
 
 export async function authRoutes(app: FastifyInstance): Promise<void> {
   const controller = new AuthController(

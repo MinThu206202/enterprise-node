@@ -1,8 +1,8 @@
 import type { FastifyInstance } from "fastify";
 
-import { container } from "../container.js";
-import { UserController } from "../controllers/UserController.js";
-import type { CreateUserInput } from "../../../../src/application/dto/users/CreateUserInput.js";
+import { container } from "../../container.js";
+import { UserController } from "../../controllers/UserController.js";
+import type { CreateUserInput } from "../../../../../src/application/dto/users/CreateUserInput.js";
 
 export async function userRoutes(app: FastifyInstance): Promise<void> {
   const controller = new UserController(container.registerUserUseCase , container.getCurrentUserUseCase);
