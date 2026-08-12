@@ -16,6 +16,22 @@ export function registerErrorHandler(app: FastifyInstance): void {
       const message = appError?.message ?? "An unexpected error occurred";
 
       request.log.error(error);
+      if ("statusCode" in error && error.statusCode === 429) {
+        return reply.status(429).send({
+          data: null,
+
+          error: {
+            code: "RATE_LIMIT_EXCEEDED",
+            message: "Too many requests",
+          },
+
+          meta: createApiMeta({
+            requestId: request.id,
+            startTime: request.startTime,
+            status: "ERROR",
+          }),
+        });
+      }
 
       return reply.status(statusCode).send({
         data: null,

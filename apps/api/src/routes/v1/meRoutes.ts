@@ -1,9 +1,9 @@
 import type { FastifyInstance } from "fastify";
 
-import { container } from "../container.js";
-import { UserController } from "../controllers/UserController.js";
+import { container } from "../../container.js";
+import { UserController } from "../../controllers/UserController.js";
 
-import { authenticate } from "../hooks/authenticate.js";
+import { authenticate } from "../../hooks/authenticate.js";
 
 export async function meRoutes(app: FastifyInstance): Promise<void> {
   const controller = new UserController(
