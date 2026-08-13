@@ -7,7 +7,6 @@ import type { RegisterUserUseCase } from "../../../../src/application/use-cases/
 import type { GetCurrentUserUseCase } from "../../../../src/application/use-cases/users/GetCurrentUserUseCase.js";
 
 import { ValidationError } from "../../../../src/shared/errors/ValidationError.js";
-
 import { UserMapper } from "../../../../src/application/mappers/UserMapper.js";
 
 export class UserController {
@@ -25,9 +24,11 @@ export class UserController {
       );
     }
 
-    const user = await this.createUserUseCase.execute(result.data);
+    const registration = await this.createUserUseCase.execute(result.data);
 
-    return reply.status(201).send(UserMapper.toResponse(user));
+    return reply.status(201).send({
+      verificationId: registration.verificationId,
+    });
   }
 
   async getMe(request: FastifyRequest, reply: FastifyReply) {

@@ -1,6 +1,5 @@
 import { randomUUID } from "node:crypto";
 
-import { User } from "../../../domain/entities/User.js";
 import type { IUserRepository } from "../../../domain/repositories/IUserRepository.js";
 
 import type { IPasswordHasher } from "../../services/auth/IPasswordHasher.js";
@@ -8,15 +7,25 @@ import type { RegisterUserInput } from "../../dto/auth/RegisterUserInput.js";
 
 import { ConflictError } from "../../../shared/errors/ConflictError.js";
 import type { ILogger } from "../../../shared/logging/ILogger.js";
+import { IOtpService } from "../../services/registration/IOtpService.js";
+import { IRegistrationStore } from "../../services/registration/IRegistrationStore.js";
+import { IEmailService } from "../../services/registration/IEmailService.js";
+
+export interface RegisterUserResult {
+  verificationId: string;
+}
 
 export class RegisterUserUseCase {
   constructor(
     private readonly userRepository: IUserRepository,
     private readonly passwordHasher: IPasswordHasher,
+    private readonly otpService: IOtpService,
+    private readonly registrationStore: IRegistrationStore,
     private readonly logger: ILogger,
+    private readonly emailService: IEmailService,
   ) {}
 
-  async execute(input: RegisterUserInput): Promise<User> {
+  async execute(input: RegisterUserInput): Promise<RegisterUserResult> {
     this.logger.info("Registering user", {
       email: input.email,
     });
@@ -33,21 +42,33 @@ export class RegisterUserUseCase {
 
     const passwordHash = await this.passwordHasher.hash(input.password);
 
-    const user = new User({
-      id: randomUUID(),
+    const otp = this.otpService.generate();
+
+    const otpHash = await this.otpService.hash(otp);
+
+    const verificationId = randomUUID();
+
+    await this.registrationStore.create(
+      verificationId,
+      {
+        email: input.email,
+        name: input.name,
+        passwordHash,
+        otpHash,
+        attempts: 0,
+      },
+      60 * 10,
+    );
+
+    await this.emailService.sendVerificationEmail(input.email, otp, input.name);
+
+    this.logger.info("Registration verification created", {
+      verificationId,
       email: input.email,
-      name: input.name,
-      passwordHash,
-      createdAt: new Date(),
-      updatedAt: new Date(),
     });
 
-    const savedUser = await this.userRepository.save(user);
-
-    this.logger.info("User registered successfully", {
-      userId: savedUser.getId(),
-    });
-
-    return savedUser;
+    return {
+      verificationId,
+    };
   }
 }

@@ -1,3 +1,5 @@
+import "../../../src/shared/time/AppTimeZone.js";
+
 import { createApp } from "./app.js";
 
 const app = createApp();

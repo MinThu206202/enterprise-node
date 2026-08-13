@@ -1,0 +1,37 @@
+import nodemailer from "nodemailer";
+
+import type { IEmailService } from "../../application/services/registration/IEmailService.js";
+
+import { renderVerificationEmail } from "./templates/verification-email.js";
+
+export class EmailService implements IEmailService {
+  private readonly transporter;
+
+  constructor() {
+    this.transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT ?? 587),
+      secure: process.env.SMTP_SECURE === "true",
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASSWORD,
+      },
+    });
+  }
+
+  async sendVerificationEmail(
+    email: string,
+    otp: string,
+    name: string,
+  ): Promise<void> {
+    const html = renderVerificationEmail(name, otp);
+
+    await this.transporter.sendMail({
+      from: process.env.SMTP_FROM,
+      to: email,
+      subject: "Verify your email address",
+      html,
+      text: `Hello ${name},\n\nYour Enterprise Node verification code is: ${otp}\n\nThis code expires in 10 minutes.\n\nIf you did not request this code, you can safely ignore this email.`,
+    });
+  }
+}

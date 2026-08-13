@@ -5,6 +5,7 @@ import { AuthController } from "../../controllers/AuthController.js";
 
 import type { RegisterInput } from "../../../../../src/application/validation/auth/registerSchema.js";
 import type { LoginInput } from "../../../../../src/application/validation/auth/loginSchema.js";
+import { VerifyEmailInput } from "../../../../../src/application/validation/auth/verifyEmailSchema.js";
 
 export async function authRoutes(app: FastifyInstance): Promise<void> {
   const controller = new AuthController(
@@ -12,6 +13,8 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
     container.loginUserUseCase,
     container.refreshTokenUseCase,
     container.logoutUseCase,
+    container.verifyEmailUseCase,
+    container.resendVerificationUseCase,
   );
 
   // Register
@@ -75,6 +78,38 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
     },
     async (request, reply) => {
       return controller.logout(request, reply);
+    },
+  );
+
+  //verify
+  app.post<{ Body: VerifyEmailInput }>(
+    "/auth/verify-email",
+    {
+      config: {
+        rateLimit: {
+          max: 10,
+          timeWindow: "1 minute",
+        },
+      },
+    },
+    async (request, reply) => {
+      return controller.verifyEmail(request, reply);
+    },
+  );
+
+  //resend
+  app.post(
+    "/auth/resend-verification",
+    {
+      config: {
+        rateLimit: {
+          max: 3,
+          timeWindow: "10 minutes",
+        },
+      },
+    },
+    async (request, reply) => {
+      return controller.resendVerification(request, reply);
     },
   );
 }
