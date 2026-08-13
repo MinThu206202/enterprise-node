@@ -42,3 +42,23 @@ model RefreshTokenSession {
   @@index([expiresAt])
   @@index([revokedAt])
 }
+
+model OutboxMessage{
+  id   String  @id @default(uuid())
+  type String
+  payload Json
+  status OutboxStatus @default(PENDING)
+  attempts Int @default(0)
+  availableAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  processedAt DateTime?
+
+  @@index([status , availableAt])
+}
+
+enum OutboxStatus{
+  PENDING
+  PROCESSING
+  PUBLISHED
+  FAILED
+}
