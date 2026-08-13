@@ -12,6 +12,7 @@ import { authRoutes } from "./routes/v1/authRoutes.js";
 import { meRoutes } from "./routes/v1/meRoutes.js";
 
 import { API_VERSION } from "../../../src/shared/http/ApiVersion.js";
+import { registerRedis } from "./plugins/redis.js";
 
 export function createApp(): FastifyInstance {
   const app = Fastify({
@@ -34,6 +35,9 @@ export function createApp(): FastifyInstance {
 
   // Rate limiting
   app.register(registerRateLimit);
+
+  //redis connection
+  app.register(registerRedis);
 
   app.get("/health", async () => {
     return {

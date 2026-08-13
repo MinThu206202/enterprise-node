@@ -15,6 +15,11 @@ import { LogoutUseCase } from "../../../src/application/use-cases/auth/LogoutUse
 import { JwtTokenService } from "../../../src/infrastructure/security/JwtTokenService.js";
 import { RefreshTokenUseCase } from "../../../src/application/use-cases/auth/RefreshTokenUseCase.js";
 import { GetCurrentUserUseCase } from "../../../src/application/use-cases/users/GetCurrentUserUseCase.js";
+import { RedisRegistrationStore } from "../../../src/infrastructure/redis/RedisRegistrationStore.js";
+import { Argon2OtpService } from "../../../src/infrastructure/security/Argon2OtpService.js";
+import { EmailService } from "../../../src/infrastructure/email/EmailService.js";
+import { VerifyEmailUseCase } from "../../../src/application/use-cases/auth/VerifyEmailUseCase.js";
+import { ResendVerificationUseCase } from "../../../src/application/use-cases/auth/ResendVerificationUseCase.js";
 
 const configService = new ConfigService();
 const tokenService = new JwtTokenService(configService);
@@ -27,6 +32,25 @@ const appLogger = new PinoLogger(logger);
 const userRepository = new PrismaUserRepository(prisma);
 
 const passwordHasher = new Argon2PasswordHasher();
+
+const registrationStore = new RedisRegistrationStore();
+
+const otpService = new Argon2OtpService();
+const emailService = new EmailService();
+
+const verifyEmailUseCase = new VerifyEmailUseCase(
+  userRepository,
+  registrationStore,
+  otpService,
+  appLogger,
+);
+
+const resendVerificationUseCase = new ResendVerificationUseCase(
+  registrationStore,
+  otpService,
+  emailService,
+  appLogger,
+);
 
 const refreshTokenSessionRepository = new PrismaRefreshTokenSessionRepository(
   prisma,
@@ -49,7 +73,10 @@ const loginUserUseCase = new LoginUserUseCase(
 const registerUserUseCase = new RegisterUserUseCase(
   userRepository,
   passwordHasher,
+  otpService,
+  registrationStore,
   appLogger,
+  emailService,
 );
 
 const logoutUseCase = new LogoutUseCase(
@@ -76,4 +103,9 @@ export const container = {
   refreshTokenUseCase,
   logoutUseCase,
   getCurrentUserUseCase,
+  registrationStore,
+  otpService,
+  emailService,
+  verifyEmailUseCase,
+  resendVerificationUseCase,
 };
