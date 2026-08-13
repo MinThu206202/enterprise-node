@@ -20,7 +20,7 @@ import { Argon2OtpService } from "../../../src/infrastructure/security/Argon2Otp
 import { EmailService } from "../../../src/infrastructure/email/EmailService.js";
 import { VerifyEmailUseCase } from "../../../src/application/use-cases/auth/VerifyEmailUseCase.js";
 import { ResendVerificationUseCase } from "../../../src/application/use-cases/auth/ResendVerificationUseCase.js";
-
+import { PrismaUnitOfWork } from "../../../src/infrastructure/database/PrismaUnitOfWork.js";
 const configService = new ConfigService();
 const tokenService = new JwtTokenService(configService);
 const logger = pino({
@@ -37,12 +37,14 @@ const registrationStore = new RedisRegistrationStore();
 
 const otpService = new Argon2OtpService();
 const emailService = new EmailService();
+const unitOfWork = new PrismaUnitOfWork(prisma);
 
 const verifyEmailUseCase = new VerifyEmailUseCase(
   userRepository,
   registrationStore,
   otpService,
   appLogger,
+  unitOfWork
 );
 
 const resendVerificationUseCase = new ResendVerificationUseCase(
@@ -108,4 +110,5 @@ export const container = {
   emailService,
   verifyEmailUseCase,
   resendVerificationUseCase,
+  unitOfWork
 };

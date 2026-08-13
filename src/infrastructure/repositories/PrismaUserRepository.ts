@@ -1,9 +1,10 @@
 import type { PrismaClient } from "../../generated/prisma/client.js";
 import { User } from "../../domain/entities/User.js";
 import type { IUserRepository } from "../../domain/repositories/IUserRepository.js";
+import { PrismaTransaction } from "../database/PrismaTransaction.js";
 
 export class PrismaUserRepository implements IUserRepository {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(private readonly prisma: PrismaClient | PrismaTransaction) {}
 
   async findById(id: string): Promise<User | null> {
     const record = await this.prisma.user.findUnique({
@@ -34,24 +35,13 @@ export class PrismaUserRepository implements IUserRepository {
   }
 
   async save(user: User): Promise<User> {
-    const record = await this.prisma.user.upsert({
-      where: {
-        id: user.getId(),
-      },
-
-      create: {
+    const record = await this.prisma.user.create({
+      data: {
         id: user.getId(),
         email: user.getEmail(),
         name: user.getName(),
         passwordHash: user.getPasswordHash(),
         createdAt: user.getCreatedAt(),
-        updatedAt: user.getUpdatedAt(),
-      },
-
-      update: {
-        email: user.getEmail(),
-        name: user.getName(),
-        passwordHash: user.getPasswordHash(),
         updatedAt: user.getUpdatedAt(),
       },
     });

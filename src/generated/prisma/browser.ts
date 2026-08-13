@@ -27,3 +27,8 @@ export type User = Prisma.UserModel
  * 
  */
 export type RefreshTokenSession = Prisma.RefreshTokenSessionModel
+/**
+ * Model OutboxMessage
+ * 
+ */
+export type OutboxMessage = Prisma.OutboxMessageModel

@@ -10,6 +10,8 @@ import type { VerifyEmailInput } from "../../validation/auth/verifyEmailSchema.j
 
 import { UnauthorizedError } from "../../../shared/errors/UnauthorizedError.js";
 import { ConflictError } from "../../../shared/errors/ConflictError.js";
+import type { IUnitOfWork } from "../../services/database/IUnitOfWork.js";
+import { AUTH_EVENTS } from "../../events/AuthEvents.js";
 
 import { randomUUID } from "node:crypto";
 
@@ -26,6 +28,7 @@ export class VerifyEmailUseCase {
     private readonly registrationStore: IRegistrationStore,
     private readonly otpService: IOtpService,
     private readonly logger: ILogger,
+    private readonly unitOfWork: IUnitOfWork,
   ) {}
 
   async execute(input: VerifyEmailInput): Promise<VerifyEmailResult> {
@@ -90,7 +93,18 @@ export class VerifyEmailUseCase {
         updatedAt: now,
       });
 
-      await this.userRepository.save(user);
+      await this.unitOfWork.execute(async (tx) => {
+        await tx.userRepository.save(user);
+
+        await tx.outboxRepository.create({
+          type: AUTH_EVENTS.USER_REGISTERED,
+          payload: {
+            userId: user.getId(),
+            email: user.getEmail(),
+            name: user.getName(),
+          },
+        });
+      });
 
       await this.registrationStore.delete(input.verificationId);
 
