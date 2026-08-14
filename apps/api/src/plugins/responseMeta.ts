@@ -4,6 +4,11 @@ import { createApiMeta } from "../../../../src/shared/http/ApiResponseBuilder.js
 
 export async function responseMetaPlugin(app: FastifyInstance): Promise<void> {
   app.addHook("onSend", async (request, reply, payload) => {
+    // Keep OpenAPI/Swagger payloads untouched.
+    if (request.url.startsWith("/swagger")) {
+      return payload;
+    }
+
     // Only process successful HTTP responses.
     if (reply.statusCode < 200 || reply.statusCode >= 300) {
       return payload;

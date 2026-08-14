@@ -4,6 +4,7 @@ import {
   rabbitMQClient,
   welcomeEmailConsumer,
   outboxWorker,
+  emailWorker,
 } from "./container.js";
 
 const app = await createApp();
@@ -22,11 +23,18 @@ async function bootstrap() {
 
     await welcomeEmailConsumer.start();
 
+
     // ---------------------------------------------
     // Start Outbox worker
     // ---------------------------------------------
 
     void outboxWorker.start();
+
+    // ---------------------------------------------
+    // Start Email worker
+    // ---------------------------------------------
+
+    await emailWorker.start();
 
     // ---------------------------------------------
     // Start HTTP server

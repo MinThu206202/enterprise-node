@@ -45,6 +45,8 @@ import { OutboxWorker } from "../../../src/application/services/outbox/OutboxWor
 
 //Inbox
 import { PrismaInboxRepository } from "../../../src/infrastructure/inbox/PrismaInboxRepository.js";
+import { EmailJobQueue } from "../../../src/infrastructure/messaging/rabbitmq/EmailJobQueue.js";
+import { EmailWorker } from "../../../src/infrastructure/messaging/rabbitmq/EmailWorker.js";
 
 // -----------------------------------------------------
 // Configuration
@@ -138,6 +140,14 @@ export const outboxWorker = new OutboxWorker(
 );
 
 // -----------------------------------------------------
+// Email Worker
+// -----------------------------------------------------
+
+const emailJobQueue = new EmailJobQueue(rabbitMQClient);
+
+export const emailWorker = new EmailWorker(rabbitMQClient, emailService, appLogger);
+
+// -----------------------------------------------------
 // Auth Use Cases
 // -----------------------------------------------------
 
@@ -162,7 +172,7 @@ const registerUserUseCase = new RegisterUserUseCase(
   otpService,
   registrationStore,
   appLogger,
-  emailService,
+  emailJobQueue,
 );
 
 const loginUserUseCase = new LoginUserUseCase(
@@ -241,4 +251,8 @@ export const container = {
 
   //inbox
   inboxRepository,
+
+  //email worker
+  emailJobQueue,
+  emailWorker,
 };
