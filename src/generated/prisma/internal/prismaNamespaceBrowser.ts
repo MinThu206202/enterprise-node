@@ -53,7 +53,8 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   User: 'User',
   RefreshTokenSession: 'RefreshTokenSession',
-  OutboxMessage: 'OutboxMessage'
+  OutboxMessage: 'OutboxMessage',
+  InboxMessage: 'InboxMessage'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -112,6 +113,16 @@ export const OutboxMessageScalarFieldEnum = {
 } as const
 
 export type OutboxMessageScalarFieldEnum = (typeof OutboxMessageScalarFieldEnum)[keyof typeof OutboxMessageScalarFieldEnum]
+
+
+export const InboxMessageScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  processedAt: 'processedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type InboxMessageScalarFieldEnum = (typeof InboxMessageScalarFieldEnum)[keyof typeof InboxMessageScalarFieldEnum]
 
 
 export const SortOrder = {

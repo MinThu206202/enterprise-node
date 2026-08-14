@@ -399,7 +399,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 export const ModelName = {
   User: 'User',
   RefreshTokenSession: 'RefreshTokenSession',
-  OutboxMessage: 'OutboxMessage'
+  OutboxMessage: 'OutboxMessage',
+  InboxMessage: 'InboxMessage'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -415,7 +416,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "refreshTokenSession" | "outboxMessage"
+    modelProps: "user" | "refreshTokenSession" | "outboxMessage" | "inboxMessage"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -641,6 +642,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    InboxMessage: {
+      payload: Prisma.$InboxMessagePayload<ExtArgs>
+      fields: Prisma.InboxMessageFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.InboxMessageFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InboxMessagePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.InboxMessageFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InboxMessagePayload>
+        }
+        findFirst: {
+          args: Prisma.InboxMessageFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InboxMessagePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.InboxMessageFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InboxMessagePayload>
+        }
+        findMany: {
+          args: Prisma.InboxMessageFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InboxMessagePayload>[]
+        }
+        create: {
+          args: Prisma.InboxMessageCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InboxMessagePayload>
+        }
+        createMany: {
+          args: Prisma.InboxMessageCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.InboxMessageCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InboxMessagePayload>[]
+        }
+        delete: {
+          args: Prisma.InboxMessageDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InboxMessagePayload>
+        }
+        update: {
+          args: Prisma.InboxMessageUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InboxMessagePayload>
+        }
+        deleteMany: {
+          args: Prisma.InboxMessageDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.InboxMessageUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.InboxMessageUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InboxMessagePayload>[]
+        }
+        upsert: {
+          args: Prisma.InboxMessageUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InboxMessagePayload>
+        }
+        aggregate: {
+          args: Prisma.InboxMessageAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateInboxMessage>
+        }
+        groupBy: {
+          args: Prisma.InboxMessageGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InboxMessageGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.InboxMessageCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InboxMessageCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -720,6 +795,16 @@ export const OutboxMessageScalarFieldEnum = {
 } as const
 
 export type OutboxMessageScalarFieldEnum = (typeof OutboxMessageScalarFieldEnum)[keyof typeof OutboxMessageScalarFieldEnum]
+
+
+export const InboxMessageScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  processedAt: 'processedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type InboxMessageScalarFieldEnum = (typeof InboxMessageScalarFieldEnum)[keyof typeof InboxMessageScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1005,6 +1090,7 @@ export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   refreshTokenSession?: Prisma.RefreshTokenSessionOmit
   outboxMessage?: Prisma.OutboxMessageOmit
+  inboxMessage?: Prisma.InboxMessageOmit
 }
 
 /* Types for Logging */

@@ -1,21 +1,46 @@
-import "../../../src/shared/time/AppTimeZone.js";
-
 import { createApp } from "./app.js";
 
-const app = createApp();
+import {
+  rabbitMQClient,
+  welcomeEmailConsumer,
+  outboxWorker,
+} from "./container.js";
 
-const start = async (): Promise<void> => {
+const app = await createApp();
+
+async function bootstrap() {
   try {
-    const port = Number(process.env.PORT ?? 3000);
+    // ---------------------------------------------
+    // Connect RabbitMQ
+    // ---------------------------------------------
+
+    await rabbitMQClient.connect();
+
+    // ---------------------------------------------
+    // Start RabbitMQ consumer
+    // ---------------------------------------------
+
+    await welcomeEmailConsumer.start();
+
+    // ---------------------------------------------
+    // Start Outbox worker
+    // ---------------------------------------------
+
+    void outboxWorker.start();
+
+    // ---------------------------------------------
+    // Start HTTP server
+    // ---------------------------------------------
 
     await app.listen({
-      port,
+      port: 3000,
       host: "0.0.0.0",
     });
   } catch (error) {
     app.log.error(error);
+
     process.exit(1);
   }
-};
+}
 
-start();
+void bootstrap();

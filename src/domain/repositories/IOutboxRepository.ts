@@ -16,4 +16,14 @@ export interface OutboxMessage {
 
 export interface IOutboxRepository {
   create(input: CreateOutboxMessageInput, tx?: unknown): Promise<void>;
+
+  getPendingMessages(limit: number): Promise<OutboxMessage[]>;
+
+  markProcessing(id: string): Promise<void>;
+
+  markPublished(id: string): Promise<void>;
+
+  markFailed(id: string, nextAvailableAt: Date): Promise<void>;
+
+  markPermanentlyFailed(id: string): Promise<void>;
 }

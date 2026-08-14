@@ -8,4 +8,10 @@ export class LoggerEmailService implements IEmailService {
     // Intentionally avoid logging OTPs or hashes.
     this.logger.info("Verification email dispatch requested", { email });
   }
+  async sendWelcomeEmail(email: string, name: string): Promise<void> {
+    this.logger.info("Welcome email would be sent", {
+      email,
+      name,
+    });
+  }
 }

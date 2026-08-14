@@ -3,15 +3,12 @@ services:
     image: postgres:17
     container_name: enterprise-node-postgres
     restart: unless-stopped
-
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: enterprise_node
-
     ports:
       - "5432:5432"
-
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -19,13 +16,25 @@ services:
     image: redis:7-alpine
     container_name: enterprise-node-redis
     restart: unless-stopped
-
     ports:
       - "6379:6379"
-
     volumes:
       - redis_data:/data
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: enterprise-node-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: enterprise
+      RABBITMQ_DEFAULT_PASS: enterprise
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
 
 volumes:
   postgres_data:
   redis_data:
+  rabbitmq_data:
