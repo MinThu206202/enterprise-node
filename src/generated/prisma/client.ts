@@ -56,3 +56,8 @@ export type RefreshTokenSession = Prisma.RefreshTokenSessionModel
  * 
  */
 export type OutboxMessage = Prisma.OutboxMessageModel
+/**
+ * Model InboxMessage
+ * 
+ */
+export type InboxMessage = Prisma.InboxMessageModel

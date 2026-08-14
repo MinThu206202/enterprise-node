@@ -34,4 +34,24 @@ export class EmailService implements IEmailService {
       text: `Hello ${name},\n\nYour Enterprise Node verification code is: ${otp}\n\nThis code expires in 10 minutes.\n\nIf you did not request this code, you can safely ignore this email.`,
     });
   }
+
+  async sendWelcomeEmail(email: string, name: string): Promise<void> {
+    const html = `
+    <!DOCTYPE html>
+    <html>
+      <body>
+        <h1>Welcome to Enterprise Node!</h1>
+        <p>Hello ${name},</p>
+        <p>Your account has been successfully created.</p>
+      </body>
+    </html>
+  `;
+
+    await this.transporter.sendMail({
+      from: process.env.SMTP_FROM,
+      to: email,
+      subject: "Welcome to Enterprise Node",
+      html,
+    });
+  }
 }

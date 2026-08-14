@@ -14,7 +14,7 @@ export class PinoLogger implements ILogger {
   }
 
   error(message: string, context?: object): void {
-    this.logger.error(context, message);
+    this.logger.error(context ?? {}, message);
   }
 
   debug(message: string, context?: object): void {

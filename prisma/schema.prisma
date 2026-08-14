@@ -62,3 +62,12 @@ enum OutboxStatus{
   PUBLISHED
   FAILED
 }
+
+model InboxMessage {
+  id String @id
+  type String
+  processedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+
+  @@map("inbox_messages")
+}
