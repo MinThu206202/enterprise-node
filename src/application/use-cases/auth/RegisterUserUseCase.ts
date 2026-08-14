@@ -9,7 +9,7 @@ import { ConflictError } from "../../../shared/errors/ConflictError.js";
 import type { ILogger } from "../../../shared/logging/ILogger.js";
 import { IOtpService } from "../../services/registration/IOtpService.js";
 import { IRegistrationStore } from "../../services/registration/IRegistrationStore.js";
-import { IEmailService } from "../../services/registration/IEmailService.js";
+import { IEmailJobQueue } from "../../services/queue/IEmailJobQueue.js";
 
 export interface RegisterUserResult {
   verificationId: string;
@@ -22,7 +22,7 @@ export class RegisterUserUseCase {
     private readonly otpService: IOtpService,
     private readonly registrationStore: IRegistrationStore,
     private readonly logger: ILogger,
-    private readonly emailService: IEmailService,
+    private readonly emailJobQueue: IEmailJobQueue,
   ) {}
 
   async execute(input: RegisterUserInput): Promise<RegisterUserResult> {
@@ -60,8 +60,12 @@ export class RegisterUserUseCase {
       60 * 10,
     );
 
-    await this.emailService.sendVerificationEmail(input.email, otp, input.name);
-
+    await this.emailJobQueue.addVerificationEmail({
+      verificationId,
+      email: input.email,
+      name: input.name,
+      otp,
+    });
     this.logger.info("Registration verification created", {
       verificationId,
       email: input.email,

@@ -13,6 +13,7 @@ import { meRoutes } from "./routes/v1/meRoutes.js";
 
 import { API_VERSION } from "../../../src/shared/http/ApiVersion.js";
 import { registerRedis } from "./plugins/redis.js";
+import { registerSwagger, swaggerCsp } from "./plugins/swagger.js";
 
 export function createApp(): FastifyInstance {
   const app = Fastify({
@@ -20,6 +21,18 @@ export function createApp(): FastifyInstance {
   });
 
   registerErrorHandler(app);
+
+  // Must register before Helmet so this onSend runs after Helmet and can
+  // relax CSP only for Swagger UI (CDN + inline scripts).
+  app.addHook("onSend", async (request, reply, payload) => {
+    if (request.url.startsWith("/swagger")) {
+      reply.header("Content-Security-Policy", swaggerCsp);
+    }
+    return payload;
+  });
+
+  // Swagger docs at /swagger
+  app.register(registerSwagger);
 
   // Request metadata
   app.register(requestMetaPlugin);
