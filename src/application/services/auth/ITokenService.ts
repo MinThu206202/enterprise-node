@@ -13,6 +13,15 @@ export interface GeneratedRefreshToken {
   expiresAt: Date;
 }
 
+export interface PasswordResetTokenPayload {
+  verificationId: string;
+}
+
+export interface GeneratedPasswordResetToken {
+  token: string;
+  expiresAt: Date;
+}
+
 export interface ITokenService {
   generateAccessToken(payload: AccessTokenPayload): Promise<string>;
 
@@ -23,4 +32,10 @@ export interface ITokenService {
   verifyAccessToken(token: string): Promise<AccessTokenPayload>;
 
   verifyRefreshToken(token: string): Promise<RefreshTokenPayload>;
+
+  generatePasswordResetToken(
+    payload: PasswordResetTokenPayload,
+  ): Promise<GeneratedPasswordResetToken>;
+
+  verifyPasswordResetToken(token: string): Promise<PasswordResetTokenPayload>;
 }

@@ -28,6 +28,28 @@ import { createApiMeta } from "../../../../src/shared/http/ApiResponseBuilder.js
 import { resendVerificationSchema } from "../../../../src/application/validation/auth/resendVerificationSchema.js";
 import { ResendVerificationUseCase } from "../../../../src/application/use-cases/auth/ResendVerificationUseCase.js";
 
+import {
+  requestForgotPasswordSchema,
+  type RequestForgotPasswordInput,
+} from "../../../../src/application/validation/auth/requestForgotPasswordSchema.js";
+import {
+  resendForgotPasswordSchema,
+  type ResendForgotPasswordInput,
+} from "../../../../src/application/validation/auth/resendForgotPasswordSchema.js";
+import {
+  verifyForgotPasswordSchema,
+  type VerifyForgotPasswordInput,
+} from "../../../../src/application/validation/auth/verifyForgotPasswordSchema.js";
+import {
+  resetPasswordSchema,
+  type ResetPasswordInput,
+} from "../../../../src/application/validation/auth/resetPasswordSchema.js";
+
+import type { RequestForgotPasswordUseCase } from "../../../../src/application/use-cases/auth/RequestForgotPasswordUseCase.js";
+import type { ResendForgotPasswordUseCase } from "../../../../src/application/use-cases/auth/ResendForgotPasswordUseCase.js";
+import type { VerifyForgotPasswordUseCase } from "../../../../src/application/use-cases/auth/VerifyForgotPasswordUseCase.js";
+import type { ResetPasswordUseCase } from "../../../../src/application/use-cases/auth/ResetPasswordUseCase.js";
+
 export class AuthController {
   constructor(
     private readonly registerUserUseCase: RegisterUserUseCase,
@@ -36,6 +58,10 @@ export class AuthController {
     private readonly logoutUseCase: LogoutUseCase,
     private readonly verifyEmailUseCase: VerifyEmailUseCase,
     private readonly resendVerificationUseCase: ResendVerificationUseCase,
+    private readonly requestForgotPasswordUseCase: RequestForgotPasswordUseCase,
+    private readonly resendForgotPasswordUseCase: ResendForgotPasswordUseCase,
+    private readonly verifyForgotPasswordUseCase: VerifyForgotPasswordUseCase,
+    private readonly resetPasswordUseCase: ResetPasswordUseCase,
   ) {}
 
   async register(
@@ -155,6 +181,106 @@ export class AuthController {
     );
     return reply.status(200).send({
       data: resultData,
+
+      meta: createApiMeta({
+        requestId: request.id,
+        startTime: request.startTime,
+        status: "SUCCESS",
+      }),
+    });
+  }
+
+  async requestForgotPassword(
+    request: FastifyRequest<{ Body: RequestForgotPasswordInput }>,
+    reply: FastifyReply,
+  ) {
+    const result = requestForgotPasswordSchema.safeParse(request.body);
+
+    if (!result.success) {
+      throw new ValidationError(
+        result.error.issues.map((issue) => issue.message).join(","),
+      );
+    }
+
+    const data = await this.requestForgotPasswordUseCase.execute(result.data);
+
+    return reply.status(200).send({
+      data,
+
+      meta: createApiMeta({
+        requestId: request.id,
+        startTime: request.startTime,
+        status: "SUCCESS",
+      }),
+    });
+  }
+
+  async resendForgotPassword(
+    request: FastifyRequest<{ Body: ResendForgotPasswordInput }>,
+    reply: FastifyReply,
+  ) {
+    const result = resendForgotPasswordSchema.safeParse(request.body);
+
+    if (!result.success) {
+      throw new ValidationError(
+        result.error.issues.map((issue) => issue.message).join(","),
+      );
+    }
+
+    const data = await this.resendForgotPasswordUseCase.execute(result.data);
+
+    return reply.status(200).send({
+      data,
+
+      meta: createApiMeta({
+        requestId: request.id,
+        startTime: request.startTime,
+        status: "SUCCESS",
+      }),
+    });
+  }
+
+  async verifyForgotPassword(
+    request: FastifyRequest<{ Body: VerifyForgotPasswordInput }>,
+    reply: FastifyReply,
+  ) {
+    const result = verifyForgotPasswordSchema.safeParse(request.body);
+
+    if (!result.success) {
+      throw new ValidationError(
+        result.error.issues.map((issue) => issue.message).join(","),
+      );
+    }
+
+    const data = await this.verifyForgotPasswordUseCase.execute(result.data);
+
+    return reply.status(200).send({
+      data,
+
+      meta: createApiMeta({
+        requestId: request.id,
+        startTime: request.startTime,
+        status: "SUCCESS",
+      }),
+    });
+  }
+
+  async resetPassword(
+    request: FastifyRequest<{ Body: ResetPasswordInput }>,
+    reply: FastifyReply,
+  ) {
+    const result = resetPasswordSchema.safeParse(request.body);
+
+    if (!result.success) {
+      throw new ValidationError(
+        result.error.issues.map((issue) => issue.message).join(","),
+      );
+    }
+
+    const data = await this.resetPasswordUseCase.execute(result.data);
+
+    return reply.status(200).send({
+      data,
 
       meta: createApiMeta({
         requestId: request.id,

@@ -54,4 +54,26 @@ export class EmailService implements IEmailService {
       html,
     });
   }
+  async sendPasswordResetEmail(
+    email: string,
+    otp: string,
+    name: string,
+  ): Promise<void> {
+    await this.transporter.sendMail({
+      from: process.env.SMTP_FROM,
+      to: email,
+      subject: "Reset your password",
+      text: `
+Hello ${name},
+
+Your password reset code is:
+
+${otp}
+
+This code will expire in 10 minutes.
+
+If you did not request a password reset, please ignore this email.
+    `.trim(),
+    });
+  }
 }

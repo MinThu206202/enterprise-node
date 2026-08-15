@@ -39,6 +39,14 @@ export class ConfigService {
     return env.JWT_REFRESH_EXPIRES_IN;
   }
 
+  get jwtResetSecret() {
+    return env.JWT_RESET_SECRET;
+  }
+
+  get jwtResetExpiresIn() {
+    return env.JWT_RESET_EXPIRES_IN;
+  }
+
   // -------------------------
   // Environment
   // -------------------------

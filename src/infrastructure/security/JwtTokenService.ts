@@ -4,6 +4,8 @@ import type {
   AccessTokenPayload,
   RefreshTokenPayload,
   GeneratedRefreshToken,
+  GeneratedPasswordResetToken,
+  PasswordResetTokenPayload,
   ITokenService,
 } from "../../application/services/auth/ITokenService.js";
 
@@ -12,11 +14,14 @@ import { ConfigService } from "../config/ConfigService.js";
 export class JwtTokenService implements ITokenService {
   private readonly accessSecret: Uint8Array;
   private readonly refreshSecret: Uint8Array;
+  private readonly resetSecret: Uint8Array;
 
   constructor(private readonly config: ConfigService) {
     this.accessSecret = new TextEncoder().encode(this.config.jwtAccessSecret);
 
     this.refreshSecret = new TextEncoder().encode(this.config.jwtRefreshSecret);
+
+    this.resetSecret = new TextEncoder().encode(this.config.jwtResetSecret);
   }
 
   async generateAccessToken(payload: AccessTokenPayload): Promise<string> {
@@ -93,12 +98,74 @@ export class JwtTokenService implements ITokenService {
     };
   }
 
+  async verifyPasswordResetToken(
+    token: string,
+  ): Promise<PasswordResetTokenPayload> {
+    const { payload } = await jwtVerify(token, this.resetSecret, {
+      algorithms: ["HS256"],
+    });
+
+    this.ensureTokenType(payload, "password-reset");
+
+    if (typeof payload.verificationId !== "string") {
+      throw new Error("Invalid password reset token");
+    }
+
+    return {
+      verificationId: payload.verificationId,
+    };
+  }
+
+  async generatePasswordResetToken(
+    payload: PasswordResetTokenPayload,
+  ): Promise<GeneratedPasswordResetToken> {
+    const token = await new SignJWT({
+      verificationId: payload.verificationId,
+      type: "password-reset",
+    })
+      .setProtectedHeader({
+        alg: "HS256",
+        typ: "JWT",
+      })
+      .setIssuedAt()
+      .setExpirationTime(this.config.jwtResetExpiresIn)
+      .sign(this.resetSecret);
+
+    const expiresAt = new Date(
+      Date.now() + this.durationToSeconds(this.config.jwtResetExpiresIn) * 1000,
+    );
+
+    return {
+      token,
+      expiresAt,
+    };
+  }
+
   private ensureTokenType(
     payload: JWTPayload,
-    expectedType: "access" | "refresh",
+    expectedType: "access" | "refresh" | "password-reset",
   ): void {
     if (payload.type !== expectedType) {
       throw new Error("Invalid token type");
     }
+  }
+
+  private durationToSeconds(value: string): number {
+    const match = /^(\d+)([smhd])$/.exec(value);
+
+    if (!match) {
+      throw new Error(`Invalid duration format: ${value}`);
+    }
+
+    const amount = parseInt(match[1], 10);
+
+    const unitMultipliers: Record<string, number> = {
+      s: 1,
+      m: 60,
+      h: 3600,
+      d: 86400,
+    };
+
+    return amount * unitMultipliers[match[2]];
   }
 }

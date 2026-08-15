@@ -14,4 +14,15 @@ export class LoggerEmailService implements IEmailService {
       name,
     });
   }
+  async sendPasswordResetEmail(
+    email: string,
+    otp: string,
+    name: string,
+  ): Promise<void> {
+    this.logger.info("Password reset email sent", {
+      email,
+      otp,
+      name,
+    });
+  }
 }
