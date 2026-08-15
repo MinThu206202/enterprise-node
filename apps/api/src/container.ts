@@ -20,6 +20,7 @@ import { ConfigService } from "../../../src/infrastructure/config/ConfigService.
 
 // Redis
 import { RedisRegistrationStore } from "../../../src/infrastructure/redis/RedisRegistrationStore.js";
+import { RedisPasswordResetStore } from "../../../src/infrastructure/redis/RedisPasswordResetStore.js";
 
 // Email
 import { EmailService } from "../../../src/infrastructure/email/EmailService.js";
@@ -31,6 +32,10 @@ import { LogoutUseCase } from "../../../src/application/use-cases/auth/LogoutUse
 import { RefreshTokenUseCase } from "../../../src/application/use-cases/auth/RefreshTokenUseCase.js";
 import { VerifyEmailUseCase } from "../../../src/application/use-cases/auth/VerifyEmailUseCase.js";
 import { ResendVerificationUseCase } from "../../../src/application/use-cases/auth/ResendVerificationUseCase.js";
+import { RequestForgotPasswordUseCase } from "../../../src/application/use-cases/auth/RequestForgotPasswordUseCase.js";
+import { ResendForgotPasswordUseCase } from "../../../src/application/use-cases/auth/ResendForgotPasswordUseCase.js";
+import { VerifyForgotPasswordUseCase } from "../../../src/application/use-cases/auth/VerifyForgotPasswordUseCase.js";
+import { ResetPasswordUseCase } from "../../../src/application/use-cases/auth/ResetPasswordUseCase.js";
 
 // User use cases
 import { GetCurrentUserUseCase } from "../../../src/application/use-cases/users/GetCurrentUserUseCase.js";
@@ -79,6 +84,8 @@ const tokenService = new JwtTokenService(configService);
 // -----------------------------------------------------
 
 const registrationStore = new RedisRegistrationStore();
+
+const passwordResetStore = new RedisPasswordResetStore();
 
 // -----------------------------------------------------
 // Email
@@ -145,7 +152,11 @@ export const outboxWorker = new OutboxWorker(
 
 const emailJobQueue = new EmailJobQueue(rabbitMQClient);
 
-export const emailWorker = new EmailWorker(rabbitMQClient, emailService, appLogger);
+export const emailWorker = new EmailWorker(
+  rabbitMQClient,
+  emailService,
+  appLogger,
+);
 
 // -----------------------------------------------------
 // Auth Use Cases
@@ -163,6 +174,36 @@ const resendVerificationUseCase = new ResendVerificationUseCase(
   registrationStore,
   otpService,
   emailService,
+  appLogger,
+);
+
+const requestForgotPasswordUseCase = new RequestForgotPasswordUseCase(
+  userRepository,
+  passwordResetStore,
+  otpService,
+  appLogger,
+  emailJobQueue,
+);
+
+const resendForgotPasswordUseCase = new ResendForgotPasswordUseCase(
+  passwordResetStore,
+  otpService,
+  emailJobQueue,
+  appLogger,
+);
+
+const verifyForgotPasswordUseCase = new VerifyForgotPasswordUseCase(
+  passwordResetStore,
+  otpService,
+  tokenService,
+  appLogger,
+);
+
+const resetPasswordUseCase = new ResetPasswordUseCase(
+  tokenService,
+  passwordResetStore,
+  passwordHasher,
+  userRepository,
   appLogger,
 );
 
@@ -215,6 +256,7 @@ export const container = {
   outboxRepository,
 
   registrationStore,
+  passwordResetStore,
   otpService,
 
   passwordHasher,
@@ -245,6 +287,12 @@ export const container = {
   refreshTokenUseCase,
   verifyEmailUseCase,
   resendVerificationUseCase,
+
+  // Forgot password
+  requestForgotPasswordUseCase,
+  resendForgotPasswordUseCase,
+  verifyForgotPasswordUseCase,
+  resetPasswordUseCase,
 
   // User
   getCurrentUserUseCase,
