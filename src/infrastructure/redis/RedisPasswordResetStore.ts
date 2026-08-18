@@ -1,7 +1,7 @@
 import type {
     IPasswordResetStore,
     PasswordResetData,
-} from "../../application/services/ password-reset/IPasswordResetStore.js";
+} from "../../application/services/password-reset/IPasswordResetStore.js";
 
 import { redisClient } from "./redisClient.js";
 

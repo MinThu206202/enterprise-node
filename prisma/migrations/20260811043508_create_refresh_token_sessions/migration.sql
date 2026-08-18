@@ -1,8 +1,8 @@
 -- CreateTable
 CREATE TABLE "RefreshTokenSession" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "tokenId" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
+    "userId" UUID NOT NULL,
     "expiresAt" TIMESTAMP(3) NOT NULL,
     "revokedAt" TIMESTAMP(3),
     "replacedByTokenId" TEXT,

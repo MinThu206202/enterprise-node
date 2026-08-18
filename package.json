@@ -24,6 +24,7 @@
     "@types/amqplib": "^0.10.8",
     "@types/node": "^26.2.0",
     "@types/nodemailer": "^8.0.1",
+    "@types/pg": "^8.21.0",
     "prisma": "^7.9.1",
     "tsx": "^4.23.11",
     "typescript": "^7.0.2"
@@ -39,7 +40,6 @@
     "dotenv": "^17.4.2",
     "fastify": "^5.11.3",
     "fastify-plugin": "^6.0.0",
-    "ioredis": "^6.0.0",
     "jose": "^6.2.8",
     "nodemailer": "^9.0.5",
     "pg": "^8.23.0",

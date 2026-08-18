@@ -8,6 +8,7 @@ import { prisma } from "../../../src/infrastructure/database/prisma/PrismaClient
 import { PrismaUnitOfWork } from "../../../src/infrastructure/database/PrismaUnitOfWork.js";
 import { PrismaUserRepository } from "../../../src/infrastructure/repositories/PrismaUserRepository.js";
 import { PrismaRefreshTokenSessionRepository } from "../../../src/infrastructure/repositories/PrismaRefreshTokenSessionRepository.js";
+import { PrismaTrustedDeviceRepository } from "../../../src/infrastructure/repositories/PrismaTrustedDeviceRepository.js";
 import { PrismaOutboxRepository } from "../../../src/infrastructure/outbox/PrismaOutboxRepository.js";
 
 // Security
@@ -21,6 +22,8 @@ import { ConfigService } from "../../../src/infrastructure/config/ConfigService.
 // Redis
 import { RedisRegistrationStore } from "../../../src/infrastructure/redis/RedisRegistrationStore.js";
 import { RedisPasswordResetStore } from "../../../src/infrastructure/redis/RedisPasswordResetStore.js";
+import { PendingLoginRedisStore } from "../../../src/infrastructure/redis/PendingLoginRedisStore.js";
+import { redisClient } from "../../../src/infrastructure/redis/redisClient.js";
 
 // Email
 import { EmailService } from "../../../src/infrastructure/email/EmailService.js";
@@ -36,6 +39,9 @@ import { RequestForgotPasswordUseCase } from "../../../src/application/use-cases
 import { ResendForgotPasswordUseCase } from "../../../src/application/use-cases/auth/ResendForgotPasswordUseCase.js";
 import { VerifyForgotPasswordUseCase } from "../../../src/application/use-cases/auth/VerifyForgotPasswordUseCase.js";
 import { ResetPasswordUseCase } from "../../../src/application/use-cases/auth/ResetPasswordUseCase.js";
+import { CheckLoginDeviceUseCase } from "../../../src/application/use-cases/auth/CheckLoginDeviceUseCase.js";
+import { CreateLoginVerificationUseCase } from "../../../src/application/use-cases/auth/CreateLoginVerificationUseCase.js";
+import { VerifyLoginOtpUseCase } from "../../../src/application/use-cases/auth/VerifyLoginOtpUseCase.js";
 
 // User use cases
 import { GetCurrentUserUseCase } from "../../../src/application/use-cases/users/GetCurrentUserUseCase.js";
@@ -87,6 +93,8 @@ const registrationStore = new RedisRegistrationStore();
 
 const passwordResetStore = new RedisPasswordResetStore();
 
+const pendingLoginStore = new PendingLoginRedisStore(redisClient as never);
+
 // -----------------------------------------------------
 // Email
 // -----------------------------------------------------
@@ -102,6 +110,8 @@ const userRepository = new PrismaUserRepository(prisma);
 const refreshTokenSessionRepository = new PrismaRefreshTokenSessionRepository(
   prisma,
 );
+
+const trustedDeviceRepository = new PrismaTrustedDeviceRepository(prisma);
 
 const outboxRepository = new PrismaOutboxRepository(prisma);
 
@@ -168,6 +178,7 @@ const verifyEmailUseCase = new VerifyEmailUseCase(
   otpService,
   appLogger,
   unitOfWork,
+  trustedDeviceRepository,
 );
 
 const resendVerificationUseCase = new ResendVerificationUseCase(
@@ -216,12 +227,25 @@ const registerUserUseCase = new RegisterUserUseCase(
   emailJobQueue,
 );
 
+const checkLoginDeviceUseCase = new CheckLoginDeviceUseCase(
+  trustedDeviceRepository,
+);
+
+const createLoginVerificationUseCase = new CreateLoginVerificationUseCase(
+  otpService,
+  pendingLoginStore,
+  emailService,
+);
+
 const loginUserUseCase = new LoginUserUseCase(
   userRepository,
   passwordHasher,
   tokenService,
   refreshTokenSessionRepository,
+  trustedDeviceRepository,
   appLogger,
+  checkLoginDeviceUseCase,
+  createLoginVerificationUseCase,
 );
 
 const refreshTokenUseCase = new RefreshTokenUseCase(
@@ -236,6 +260,15 @@ const logoutUseCase = new LogoutUseCase(
   appLogger,
 );
 
+const verifyLoginOtpUseCase = new VerifyLoginOtpUseCase(
+  pendingLoginStore,
+  otpService,
+  tokenService,
+  refreshTokenSessionRepository,
+  trustedDeviceRepository,
+  appLogger,
+);
+
 // -----------------------------------------------------
 // User Use Cases
 // -----------------------------------------------------
@@ -244,6 +277,8 @@ const getCurrentUserUseCase = new GetCurrentUserUseCase(
   userRepository,
   appLogger,
 );
+
+
 
 // -----------------------------------------------------
 // Container
@@ -293,6 +328,9 @@ export const container = {
   resendForgotPasswordUseCase,
   verifyForgotPasswordUseCase,
   resetPasswordUseCase,
+
+  // Login OTP
+  verifyLoginOtpUseCase,
 
   // User
   getCurrentUserUseCase,

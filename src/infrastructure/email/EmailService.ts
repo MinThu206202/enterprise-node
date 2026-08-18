@@ -76,4 +76,32 @@ If you did not request a password reset, please ignore this email.
     `.trim(),
     });
   }
+
+  async sendNewDeviceLoginEmail(params: {
+    to: string;
+    otp: string;
+    deviceInfo: string | null;
+    ipAddress: string | null;
+  }): Promise<void> {
+    const device = params.deviceInfo ?? "Unknown device";
+    const ip = params.ipAddress ?? "Unknown IP";
+
+    await this.transporter.sendMail({
+      from: process.env.SMTP_FROM,
+      to: params.to,
+      subject: "New device login verification",
+      text: `
+A new login was attempted from:
+
+Device: ${device}
+IP: ${ip}
+
+Your verification code is: ${params.otp}
+
+This code will expire in 10 minutes.
+
+If you did not attempt this login, please secure your account immediately.
+    `.trim(),
+    });
+  }
 }

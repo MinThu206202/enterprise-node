@@ -1,6 +1,7 @@
 import type { IUserRepository } from "../../../domain/repositories/IUserRepository.js";
 
 import type { IRefreshTokenSessionRepository } from "../../../domain/repositories/IRefreshTokenSessionRepository.js";
+import type { ITrustedDeviceRepository } from "../../../domain/repositories/ITrustedDeviceRepository.js";
 
 import { RefreshTokenSession } from "../../../domain/entities/RefreshTokenSession.js";
 
@@ -14,12 +15,23 @@ import { UnauthorizedError } from "../../../shared/errors/UnauthorizedError.js";
 import type { ILogger } from "../../../shared/logging/ILogger.js";
 
 import type { RequestContext } from "../../context/RequestContext.js";
+
 import { randomUUID } from "node:crypto";
 
-export interface LoginUserResult {
-  accessToken: string;
-  refreshToken: string;
-}
+import { CheckLoginDeviceUseCase } from "./CheckLoginDeviceUseCase.js";
+import { CreateLoginVerificationUseCase } from "./CreateLoginVerificationUseCase.js";
+
+export type LoginUserResult =
+  | {
+      requiresVerification: false;
+      accessToken: string;
+      refreshToken: string;
+    }
+  | {
+      requiresVerification: true;
+      verificationId: string;
+      message: string;
+    };
 
 export class LoginUserUseCase {
   constructor(
@@ -27,7 +39,10 @@ export class LoginUserUseCase {
     private readonly passwordHasher: IPasswordHasher,
     private readonly tokenService: ITokenService,
     private readonly refreshTokenSessionRepository: IRefreshTokenSessionRepository,
+    private readonly trustedDeviceRepository: ITrustedDeviceRepository,
     private readonly logger: ILogger,
+    private readonly checkLoginDeviceUseCase: CheckLoginDeviceUseCase,
+    private readonly createLoginVerificationUseCase: CreateLoginVerificationUseCase,
   ) {}
 
   async execute(
@@ -62,6 +77,32 @@ export class LoginUserUseCase {
       throw new UnauthorizedError("Invalid email or password");
     }
 
+    const deviceCheck = await this.checkLoginDeviceUseCase.execute(
+      user.getId(),
+      context.ipAddress ?? "unknown",
+    );
+
+    if (deviceCheck.isNewDevice) {
+      const verification = await this.createLoginVerificationUseCase.execute(
+        user.getId(),
+        user.getEmail(),
+        context,
+      );
+
+      this.logger.info("Login verification required for new device", {
+        userId: user.getId(),
+        verificationId: verification.verificationId,
+        ipAddress: context.ipAddress,
+      });
+
+      return {
+        requiresVerification: true,
+        verificationId: verification.verificationId,
+        message:
+          "New device detected. A verification code has been sent to your email.",
+      };
+    }
+
     const accessToken = await this.tokenService.generateAccessToken({
       userId: user.getId(),
     });
@@ -72,6 +113,7 @@ export class LoginUserUseCase {
       userId: user.getId(),
       tokenId,
     });
+
     const now = new Date();
 
     const session = new RefreshTokenSession({
@@ -98,12 +140,18 @@ export class LoginUserUseCase {
 
     await this.refreshTokenSessionRepository.save(session);
 
+    const deviceId = this.checkLoginDeviceUseCase.generateDeviceId(
+      context.ipAddress ?? "unknown",
+    );
+    await this.trustedDeviceRepository.updateLastSeen(deviceId, user.getId());
+
     this.logger.info("User logged in successfully", {
       userId: user.getId(),
       tokenId,
     });
 
     return {
+      requiresVerification: false,
       accessToken,
       refreshToken: generatedRefreshToken.token,
     };

@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 
 import type { ITokenService } from "../../services/auth/ITokenService.js";
-import type { IPasswordResetStore } from "../../services/ password-reset/IPasswordResetStore.js";
+import type { IPasswordResetStore } from "../../services/password-reset/IPasswordResetStore.js";
 import type { IPasswordHasher } from "../../services/auth/IPasswordHasher.js";
 import type { IUserRepository } from "../../../domain/repositories/IUserRepository.js";
 import type { ResetPasswordInput } from "../../dto/auth/ResetPasswordInput.js";

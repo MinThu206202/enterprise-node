@@ -49,6 +49,8 @@ import type { RequestForgotPasswordUseCase } from "../../../../src/application/u
 import type { ResendForgotPasswordUseCase } from "../../../../src/application/use-cases/auth/ResendForgotPasswordUseCase.js";
 import type { VerifyForgotPasswordUseCase } from "../../../../src/application/use-cases/auth/VerifyForgotPasswordUseCase.js";
 import type { ResetPasswordUseCase } from "../../../../src/application/use-cases/auth/ResetPasswordUseCase.js";
+import { verifyLoginOtpSchema } from "../../../../src/application/validation/auth/verifyLoginOtpSchema.js";
+import type { VerifyLoginOtpUseCase } from "../../../../src/application/use-cases/auth/VerifyLoginOtpUseCase.js";
 
 export class AuthController {
   constructor(
@@ -62,6 +64,7 @@ export class AuthController {
     private readonly resendForgotPasswordUseCase: ResendForgotPasswordUseCase,
     private readonly verifyForgotPasswordUseCase: VerifyForgotPasswordUseCase,
     private readonly resetPasswordUseCase: ResetPasswordUseCase,
+    private readonly verifyLoginOtpUseCase: VerifyLoginOtpUseCase,
   ) {}
 
   async register(
@@ -154,7 +157,12 @@ export class AuthController {
 
     const input: VerifyEmailInput = result.data;
 
-    const user = await this.verifyEmailUseCase.execute(input);
+    const context = {
+      ipAddress: request.ip,
+      deviceInfo: request.headers["user-agent"] ?? null,
+    };
+
+    const user = await this.verifyEmailUseCase.execute(input, context);
 
     return reply.status(200).send({
       data: user,
@@ -287,6 +295,21 @@ export class AuthController {
         startTime: request.startTime,
         status: "SUCCESS",
       }),
+    });
+  }
+
+  async verifyLoginOtp(request: FastifyRequest, reply: FastifyReply) {
+    const input = verifyLoginOtpSchema.parse(request.body);
+
+    const result = await this.verifyLoginOtpUseCase.execute(input);
+
+    return reply.send({
+      data: result,
+      meta: {
+        requestId: request.id,
+        timestamp: new Date().toISOString(),
+        status: "SUCCESS",
+      },
     });
   }
 }

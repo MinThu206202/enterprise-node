@@ -11,4 +11,10 @@ export interface IEmailService {
     otp: string,
     name: string,
   ): Promise<void>;
+  sendNewDeviceLoginEmail(params: {
+    to: string;
+    otp: string;
+    deviceInfo: string | null;
+    ipAddress: string | null;
+  }): Promise<void>;
 }

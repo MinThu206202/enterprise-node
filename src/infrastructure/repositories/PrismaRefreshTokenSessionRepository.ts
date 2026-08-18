@@ -102,4 +102,49 @@ export class PrismaRefreshTokenSessionRepository implements IRefreshTokenSession
       updatedAt: record.updatedAt,
     });
   }
+
+  async hasDevice(userId: string, deviceInfo: string): Promise<boolean> {
+    const session = await this.prisma.refreshTokenSession.findFirst({
+      where: {
+        userId,
+        deviceInfo,
+        revokedAt: null,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    return session !== null;
+  }
+
+  async hasKnownDevice(userId: string, deviceFingerprint: string): Promise<boolean> {
+    const session = await this.prisma.refreshTokenSession.findFirst({
+      where: {
+        userId,
+        deviceInfo: deviceFingerprint,
+        revokedAt: null,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    return session !== null;
+  }
+
+  async hasKnownIp(userId: string, ipAddress: string): Promise<boolean> {
+    const session = await this.prisma.refreshTokenSession.findFirst({
+      where: {
+        userId,
+        ipAddress,
+        revokedAt: null,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    return session !== null;
+  }
 }

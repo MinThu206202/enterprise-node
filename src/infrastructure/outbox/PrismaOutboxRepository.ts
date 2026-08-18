@@ -1,8 +1,6 @@
-import { PrismaClient } from "@prisma/client/extension";
-import { PrismaTransaction } from "../database/PrismaTransaction.js";
-import { IOutboxRepository } from "../../domain/repositories/IOutboxRepository.js";
-import { CreateOutboxMessageInput } from "../../application/services/outbox/ IOutboxRepository.js";
-import { OutboxMessage } from "../../generated/prisma/client.js";
+import type { PrismaClient } from "../../generated/prisma/client.js";
+import type { PrismaTransaction } from "../database/PrismaTransaction.js";
+import type { IOutboxRepository, CreateOutboxMessageInput } from "../../domain/repositories/IOutboxRepository.js";
 
 export class PrismaOutboxRepository implements IOutboxRepository {
   constructor(private readonly prisma: PrismaClient | PrismaTransaction) {}
@@ -11,12 +9,12 @@ export class PrismaOutboxRepository implements IOutboxRepository {
     await this.prisma.outboxMessage.create({
       data: {
         type: input.type,
-        payload: input.payload,
+        payload: input.payload as never,
       },
     });
   }
 
-  async getPendingMessages(limit: number): Promise<OutboxMessage[]> {
+  async getPendingMessages(limit: number) {
     const messages = await this.prisma.outboxMessage.findMany({
       where: {
         status: "PENDING",
@@ -30,10 +28,10 @@ export class PrismaOutboxRepository implements IOutboxRepository {
       take: limit,
     });
 
-    return messages.map((message: OutboxMessage) => ({
+    return messages.map((message) => ({
       id: message.id,
       type: message.type,
-      payload: message.payload,
+      payload: message.payload as Record<string, unknown>,
       status: message.status,
       attempts: message.attempts,
       availableAt: message.availableAt,

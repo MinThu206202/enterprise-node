@@ -16,6 +16,11 @@ import { AUTH_EVENTS } from "../../events/AuthEvents.js";
 import { randomUUID } from "node:crypto";
 
 import { User } from "../../../domain/entities/User.js";
+import type { ITrustedDeviceRepository } from "../../../domain/repositories/ITrustedDeviceRepository.js";
+import type { RequestContext } from "../../context/RequestContext.js";
+import { CheckLoginDeviceUseCase } from "./CheckLoginDeviceUseCase.js";
+
+const TRUST_DAYS = 30;
 
 export interface VerifyEmailResult {
   userId: string;
@@ -29,9 +34,13 @@ export class VerifyEmailUseCase {
     private readonly otpService: IOtpService,
     private readonly logger: ILogger,
     private readonly unitOfWork: IUnitOfWork,
+    private readonly trustedDeviceRepository: ITrustedDeviceRepository,
   ) {}
 
-  async execute(input: VerifyEmailInput): Promise<VerifyEmailResult> {
+  async execute(
+    input: VerifyEmailInput,
+    context: RequestContext,
+  ): Promise<VerifyEmailResult> {
     const lockId = randomUUID();
 
     const acquired = await this.registrationStore.acquireVerificationLock(
@@ -104,6 +113,26 @@ export class VerifyEmailUseCase {
             name: user.getName(),
           },
         });
+      });
+
+      const deviceInfo = context.deviceInfo ?? "unknown";
+      const ipAddress = context.ipAddress ?? "unknown";
+      const checkLoginDevice = new CheckLoginDeviceUseCase(this.trustedDeviceRepository);
+      const deviceId = checkLoginDevice.generateDeviceId(ipAddress);
+      const trustedUntil = new Date(now.getTime() + TRUST_DAYS * 24 * 60 * 60 * 1000);
+
+      await this.trustedDeviceRepository.save({
+        id: randomUUID(),
+        userId: user.getId(),
+        deviceId,
+        deviceInfo,
+        ipAddress: context.ipAddress,
+        firstSeenAt: now,
+        lastSeenAt: now,
+        trustedUntil,
+        revokedAt: null,
+        createdAt: now,
+        updatedAt: now,
       });
 
       await this.registrationStore.delete(input.verificationId);

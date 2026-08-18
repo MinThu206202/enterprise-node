@@ -228,7 +228,7 @@ export type OutboxMessageWhereInput = {
   AND?: Prisma.OutboxMessageWhereInput | Prisma.OutboxMessageWhereInput[]
   OR?: Prisma.OutboxMessageWhereInput[]
   NOT?: Prisma.OutboxMessageWhereInput | Prisma.OutboxMessageWhereInput[]
-  id?: Prisma.StringFilter<"OutboxMessage"> | string
+  id?: Prisma.UuidFilter<"OutboxMessage"> | string
   type?: Prisma.StringFilter<"OutboxMessage"> | string
   payload?: Prisma.JsonFilter<"OutboxMessage">
   status?: Prisma.EnumOutboxStatusFilter<"OutboxMessage"> | $Enums.OutboxStatus
@@ -283,7 +283,7 @@ export type OutboxMessageScalarWhereWithAggregatesInput = {
   AND?: Prisma.OutboxMessageScalarWhereWithAggregatesInput | Prisma.OutboxMessageScalarWhereWithAggregatesInput[]
   OR?: Prisma.OutboxMessageScalarWhereWithAggregatesInput[]
   NOT?: Prisma.OutboxMessageScalarWhereWithAggregatesInput | Prisma.OutboxMessageScalarWhereWithAggregatesInput[]
-  id?: Prisma.StringWithAggregatesFilter<"OutboxMessage"> | string
+  id?: Prisma.UuidWithAggregatesFilter<"OutboxMessage"> | string
   type?: Prisma.StringWithAggregatesFilter<"OutboxMessage"> | string
   payload?: Prisma.JsonWithAggregatesFilter<"OutboxMessage">
   status?: Prisma.EnumOutboxStatusWithAggregatesFilter<"OutboxMessage"> | $Enums.OutboxStatus
