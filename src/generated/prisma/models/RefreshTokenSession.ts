@@ -212,9 +212,9 @@ export type RefreshTokenSessionWhereInput = {
   AND?: Prisma.RefreshTokenSessionWhereInput | Prisma.RefreshTokenSessionWhereInput[]
   OR?: Prisma.RefreshTokenSessionWhereInput[]
   NOT?: Prisma.RefreshTokenSessionWhereInput | Prisma.RefreshTokenSessionWhereInput[]
-  id?: Prisma.StringFilter<"RefreshTokenSession"> | string
+  id?: Prisma.UuidFilter<"RefreshTokenSession"> | string
   tokenId?: Prisma.StringFilter<"RefreshTokenSession"> | string
-  userId?: Prisma.StringFilter<"RefreshTokenSession"> | string
+  userId?: Prisma.UuidFilter<"RefreshTokenSession"> | string
   expiresAt?: Prisma.DateTimeFilter<"RefreshTokenSession"> | Date | string
   revokedAt?: Prisma.DateTimeNullableFilter<"RefreshTokenSession"> | Date | string | null
   replacedByTokenId?: Prisma.StringNullableFilter<"RefreshTokenSession"> | string | null
@@ -245,7 +245,7 @@ export type RefreshTokenSessionWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.RefreshTokenSessionWhereInput | Prisma.RefreshTokenSessionWhereInput[]
   OR?: Prisma.RefreshTokenSessionWhereInput[]
   NOT?: Prisma.RefreshTokenSessionWhereInput | Prisma.RefreshTokenSessionWhereInput[]
-  userId?: Prisma.StringFilter<"RefreshTokenSession"> | string
+  userId?: Prisma.UuidFilter<"RefreshTokenSession"> | string
   expiresAt?: Prisma.DateTimeFilter<"RefreshTokenSession"> | Date | string
   revokedAt?: Prisma.DateTimeNullableFilter<"RefreshTokenSession"> | Date | string | null
   replacedByTokenId?: Prisma.StringNullableFilter<"RefreshTokenSession"> | string | null
@@ -276,9 +276,9 @@ export type RefreshTokenSessionScalarWhereWithAggregatesInput = {
   AND?: Prisma.RefreshTokenSessionScalarWhereWithAggregatesInput | Prisma.RefreshTokenSessionScalarWhereWithAggregatesInput[]
   OR?: Prisma.RefreshTokenSessionScalarWhereWithAggregatesInput[]
   NOT?: Prisma.RefreshTokenSessionScalarWhereWithAggregatesInput | Prisma.RefreshTokenSessionScalarWhereWithAggregatesInput[]
-  id?: Prisma.StringWithAggregatesFilter<"RefreshTokenSession"> | string
+  id?: Prisma.UuidWithAggregatesFilter<"RefreshTokenSession"> | string
   tokenId?: Prisma.StringWithAggregatesFilter<"RefreshTokenSession"> | string
-  userId?: Prisma.StringWithAggregatesFilter<"RefreshTokenSession"> | string
+  userId?: Prisma.UuidWithAggregatesFilter<"RefreshTokenSession"> | string
   expiresAt?: Prisma.DateTimeWithAggregatesFilter<"RefreshTokenSession"> | Date | string
   revokedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"RefreshTokenSession"> | Date | string | null
   replacedByTokenId?: Prisma.StringNullableWithAggregatesFilter<"RefreshTokenSession"> | string | null
@@ -527,9 +527,9 @@ export type RefreshTokenSessionScalarWhereInput = {
   AND?: Prisma.RefreshTokenSessionScalarWhereInput | Prisma.RefreshTokenSessionScalarWhereInput[]
   OR?: Prisma.RefreshTokenSessionScalarWhereInput[]
   NOT?: Prisma.RefreshTokenSessionScalarWhereInput | Prisma.RefreshTokenSessionScalarWhereInput[]
-  id?: Prisma.StringFilter<"RefreshTokenSession"> | string
+  id?: Prisma.UuidFilter<"RefreshTokenSession"> | string
   tokenId?: Prisma.StringFilter<"RefreshTokenSession"> | string
-  userId?: Prisma.StringFilter<"RefreshTokenSession"> | string
+  userId?: Prisma.UuidFilter<"RefreshTokenSession"> | string
   expiresAt?: Prisma.DateTimeFilter<"RefreshTokenSession"> | Date | string
   revokedAt?: Prisma.DateTimeNullableFilter<"RefreshTokenSession"> | Date | string | null
   replacedByTokenId?: Prisma.StringNullableFilter<"RefreshTokenSession"> | string | null

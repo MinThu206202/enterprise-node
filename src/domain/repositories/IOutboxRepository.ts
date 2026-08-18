@@ -1,12 +1,13 @@
 export interface CreateOutboxMessageInput {
   type: string;
-  payload: unknown;
+  payload: Record<string, unknown>;
+  availableAt?: Date;
 }
 
 export interface OutboxMessage {
   id: string;
   type: string;
-  payload: unknown;
+  payload: Record<string, unknown>;
   status: string;
   attempts: number;
   availableAt: Date;

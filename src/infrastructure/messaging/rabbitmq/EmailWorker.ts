@@ -86,13 +86,6 @@ export class EmailWorker {
             error,
           });
 
-          /*
-           * For now:
-           * reject the message without retry.
-           *
-           * Later you can add:
-           * retry + DLQ.
-           */
           channel.nack(message, false, false);
         }
       },

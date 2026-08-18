@@ -61,3 +61,8 @@ export type OutboxMessage = Prisma.OutboxMessageModel
  * 
  */
 export type InboxMessage = Prisma.InboxMessageModel
+/**
+ * Model TrustedDevice
+ * 
+ */
+export type TrustedDevice = Prisma.TrustedDeviceModel

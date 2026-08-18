@@ -3,7 +3,7 @@ CREATE TYPE "OutboxStatus" AS ENUM ('PENDING', 'PROCESSING', 'PUBLISHED', 'FAILE
 
 -- CreateTable
 CREATE TABLE "OutboxMessage" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "type" TEXT NOT NULL,
     "payload" JSONB NOT NULL,
     "status" "OutboxStatus" NOT NULL DEFAULT 'PENDING',

@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(uuid())
+  id           String   @id @default(uuid()) @db.Uuid
   email        String   @unique
   name         String
   passwordHash String?
@@ -19,12 +19,13 @@ model User {
   refreshTokenSessions RefreshTokenSession[]
 
   @@map("users")
+  trustedDevices TrustedDevice[]
 }
 
 model RefreshTokenSession {
-  id                String   @id @default(uuid())
+  id                String   @id @default(uuid()) @db.Uuid
   tokenId           String   @unique
-  userId            String
+  userId            String   @db.Uuid
 
   expiresAt         DateTime
   revokedAt         DateTime?
@@ -44,7 +45,7 @@ model RefreshTokenSession {
 }
 
 model OutboxMessage{
-  id   String  @id @default(uuid())
+  id   String  @id @default(uuid()) @db.Uuid
   type String
   payload Json
   status OutboxStatus @default(PENDING)
@@ -70,4 +71,34 @@ model InboxMessage {
   createdAt DateTime @default(now())
 
   @@map("inbox_messages")
+}
+
+model TrustedDevice {
+  id            String    @id @default(uuid())
+
+  userId        String    @db.Uuid
+
+  deviceId      String
+  deviceInfo    String?
+  ipAddress     String?
+
+  firstSeenAt   DateTime  @default(now())
+  lastSeenAt    DateTime  @default(now())
+
+  trustedUntil  DateTime
+
+  revokedAt     DateTime?
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, deviceId])
+
+  @@index([userId])
+
+  @@index([trustedUntil])
+
+  @@index([revokedAt])
 }

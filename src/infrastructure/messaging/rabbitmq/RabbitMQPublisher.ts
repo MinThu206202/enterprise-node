@@ -30,9 +30,5 @@ export class RabbitMQPublisher implements IMessagePublisher {
     if (!published) {
       throw new Error(`Failed to publish RabbitMQ message: ${messageId}`);
     }
-    // (void type, void payload, void messageId);
-    // void this.rabbitMQClient;
-
-    // throw new Error("TEST_RABBITMQ_FAILURE");
   }
 }

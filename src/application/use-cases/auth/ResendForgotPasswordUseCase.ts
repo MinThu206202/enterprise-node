@@ -1,4 +1,4 @@
-import type { IPasswordResetStore } from "../../services/ password-reset/IPasswordResetStore.js";
+import type { IPasswordResetStore } from "../../services/password-reset/IPasswordResetStore.js";
 import type { IOtpService } from "../../services/registration/IOtpService.js";
 import type { IEmailJobQueue } from "../../services/queue/IEmailJobQueue.js";
 import type { ILogger } from "../../../shared/logging/ILogger.js";

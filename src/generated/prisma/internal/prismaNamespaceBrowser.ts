@@ -54,7 +54,8 @@ export const ModelName = {
   User: 'User',
   RefreshTokenSession: 'RefreshTokenSession',
   OutboxMessage: 'OutboxMessage',
-  InboxMessage: 'InboxMessage'
+  InboxMessage: 'InboxMessage',
+  TrustedDevice: 'TrustedDevice'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -123,6 +124,23 @@ export const InboxMessageScalarFieldEnum = {
 } as const
 
 export type InboxMessageScalarFieldEnum = (typeof InboxMessageScalarFieldEnum)[keyof typeof InboxMessageScalarFieldEnum]
+
+
+export const TrustedDeviceScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  deviceId: 'deviceId',
+  deviceInfo: 'deviceInfo',
+  ipAddress: 'ipAddress',
+  firstSeenAt: 'firstSeenAt',
+  lastSeenAt: 'lastSeenAt',
+  trustedUntil: 'trustedUntil',
+  revokedAt: 'revokedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TrustedDeviceScalarFieldEnum = (typeof TrustedDeviceScalarFieldEnum)[keyof typeof TrustedDeviceScalarFieldEnum]
 
 
 export const SortOrder = {

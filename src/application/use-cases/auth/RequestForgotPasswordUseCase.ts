@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 
 import type { IUserRepository } from "../../../domain/repositories/IUserRepository.js";
 
-import type { IPasswordResetStore } from "../../services/ password-reset/IPasswordResetStore.js";
+import type { IPasswordResetStore } from "../../services/password-reset/IPasswordResetStore.js";
 import type { IOtpService } from "../../services/registration/IOtpService.js";
 import type { IEmailJobQueue } from "../../services/queue/IEmailJobQueue.js";
 import type { RequestForgotPasswordInput } from "../../dto/auth/RequestForgotPasswordInput.js";

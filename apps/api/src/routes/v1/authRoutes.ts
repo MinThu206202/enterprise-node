@@ -23,6 +23,7 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
     container.resendForgotPasswordUseCase,
     container.verifyForgotPasswordUseCase,
     container.resetPasswordUseCase,
+    container.verifyLoginOtpUseCase,
   );
 
   // Register

@@ -8,4 +8,9 @@ export interface IRefreshTokenSessionRepository {
   revoke(tokenId: string): Promise<void>;
 
   replace(tokenId: string, replacedByTokenId: string): Promise<void>;
+
+  hasKnownDevice(userId: string, deviceFingerprint: string): Promise<boolean>;
+
+  hasKnownIp(userId: string, ipAddress: string): Promise<boolean>;
+  hasDevice(userId: string, deviceInfo: string): Promise<boolean>;
 }
