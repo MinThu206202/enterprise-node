@@ -58,6 +58,12 @@ import { OutboxWorker } from "../../../src/application/services/outbox/OutboxWor
 import { PrismaInboxRepository } from "../../../src/infrastructure/inbox/PrismaInboxRepository.js";
 import { EmailJobQueue } from "../../../src/infrastructure/messaging/rabbitmq/EmailJobQueue.js";
 import { EmailWorker } from "../../../src/infrastructure/messaging/rabbitmq/EmailWorker.js";
+import { PrismaRoleRepository } from "../../../src/infrastructure/repositories/PrismaRoleRepository.js";
+import { CreateRoleUseCase } from "../../../src/application/use-cases/roles/CreateRoleUseCase.js";
+import { GetRoleUseCase } from "../../../src/application/use-cases/roles/GetRoleUseCase.js";
+import { UpdateRoleUseCase } from "../../../src/application/use-cases/roles/UpdateRoleUseCase.js";
+import { DeleteRoleUseCase } from "../../../src/application/use-cases/roles/DeleteRoleUseCase.js";
+import { GetAllRolesUseCase } from "../../../src/application/use-cases/roles/GetAllRolesUseCase.js";
 
 // -----------------------------------------------------
 // Configuration
@@ -145,6 +151,22 @@ export const welcomeEmailConsumer = new WelcomeEmailConsumer(
   logger,
   inboxRepository,
 );
+
+// -----------------------------------------------------
+// Role
+// -----------------------------------------------------
+
+const roleRepository = new PrismaRoleRepository(prisma);
+
+const createRoleUseCase = new CreateRoleUseCase(roleRepository);
+
+const getRoleUseCase = new GetRoleUseCase(roleRepository);
+
+const getAllRolesUseCase = new GetAllRolesUseCase(roleRepository);
+
+const updateRoleUseCase = new UpdateRoleUseCase(roleRepository);
+
+const deleteRoleUseCase = new DeleteRoleUseCase(roleRepository);
 
 // -----------------------------------------------------
 // Outbox Worker
@@ -278,8 +300,6 @@ const getCurrentUserUseCase = new GetCurrentUserUseCase(
   appLogger,
 );
 
-
-
 // -----------------------------------------------------
 // Container
 // -----------------------------------------------------
@@ -341,4 +361,10 @@ export const container = {
   //email worker
   emailJobQueue,
   emailWorker,
+  roleRepository,
+  createRoleUseCase,
+  getRoleUseCase,
+  getAllRolesUseCase,
+  updateRoleUseCase,
+  deleteRoleUseCase,
 };

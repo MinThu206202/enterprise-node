@@ -66,3 +66,13 @@ export type InboxMessage = Prisma.InboxMessageModel
  * 
  */
 export type TrustedDevice = Prisma.TrustedDeviceModel
+/**
+ * Model Role
+ * 
+ */
+export type Role = Prisma.RoleModel
+/**
+ * Model UserRole
+ * 
+ */
+export type UserRole = Prisma.UserRoleModel

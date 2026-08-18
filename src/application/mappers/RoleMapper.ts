@@ -1,0 +1,24 @@
+import type { Role as PrismaRole } from "../../generated/prisma/client.js";
+import { Role } from "../../domain/entities/Role.js";
+
+export class RoleMapper {
+  static toDomain(data: PrismaRole): Role {
+    return Role.create({
+      id: data.id,
+      name: data.name,
+      description: data.description,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+    });
+  }
+
+  static toPersistence(role: Role) {
+    return {
+      id: role.id,
+      name: role.name,
+      description: role.description,
+      createdAt: role.createdAt,
+      updatedAt: role.updatedAt,
+    };
+  }
+}

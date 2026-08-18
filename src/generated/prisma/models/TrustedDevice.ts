@@ -220,7 +220,7 @@ export type TrustedDeviceWhereInput = {
   OR?: Prisma.TrustedDeviceWhereInput[]
   NOT?: Prisma.TrustedDeviceWhereInput | Prisma.TrustedDeviceWhereInput[]
   id?: Prisma.StringFilter<"TrustedDevice"> | string
-  userId?: Prisma.StringFilter<"TrustedDevice"> | string
+  userId?: Prisma.UuidFilter<"TrustedDevice"> | string
   deviceId?: Prisma.StringFilter<"TrustedDevice"> | string
   deviceInfo?: Prisma.StringNullableFilter<"TrustedDevice"> | string | null
   ipAddress?: Prisma.StringNullableFilter<"TrustedDevice"> | string | null
@@ -254,7 +254,7 @@ export type TrustedDeviceWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.TrustedDeviceWhereInput | Prisma.TrustedDeviceWhereInput[]
   OR?: Prisma.TrustedDeviceWhereInput[]
   NOT?: Prisma.TrustedDeviceWhereInput | Prisma.TrustedDeviceWhereInput[]
-  userId?: Prisma.StringFilter<"TrustedDevice"> | string
+  userId?: Prisma.UuidFilter<"TrustedDevice"> | string
   deviceId?: Prisma.StringFilter<"TrustedDevice"> | string
   deviceInfo?: Prisma.StringNullableFilter<"TrustedDevice"> | string | null
   ipAddress?: Prisma.StringNullableFilter<"TrustedDevice"> | string | null
@@ -289,7 +289,7 @@ export type TrustedDeviceScalarWhereWithAggregatesInput = {
   OR?: Prisma.TrustedDeviceScalarWhereWithAggregatesInput[]
   NOT?: Prisma.TrustedDeviceScalarWhereWithAggregatesInput | Prisma.TrustedDeviceScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"TrustedDevice"> | string
-  userId?: Prisma.StringWithAggregatesFilter<"TrustedDevice"> | string
+  userId?: Prisma.UuidWithAggregatesFilter<"TrustedDevice"> | string
   deviceId?: Prisma.StringWithAggregatesFilter<"TrustedDevice"> | string
   deviceInfo?: Prisma.StringNullableWithAggregatesFilter<"TrustedDevice"> | string | null
   ipAddress?: Prisma.StringNullableWithAggregatesFilter<"TrustedDevice"> | string | null
@@ -554,7 +554,7 @@ export type TrustedDeviceScalarWhereInput = {
   OR?: Prisma.TrustedDeviceScalarWhereInput[]
   NOT?: Prisma.TrustedDeviceScalarWhereInput | Prisma.TrustedDeviceScalarWhereInput[]
   id?: Prisma.StringFilter<"TrustedDevice"> | string
-  userId?: Prisma.StringFilter<"TrustedDevice"> | string
+  userId?: Prisma.UuidFilter<"TrustedDevice"> | string
   deviceId?: Prisma.StringFilter<"TrustedDevice"> | string
   deviceInfo?: Prisma.StringNullableFilter<"TrustedDevice"> | string | null
   ipAddress?: Prisma.StringNullableFilter<"TrustedDevice"> | string | null

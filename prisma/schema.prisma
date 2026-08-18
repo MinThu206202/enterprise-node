@@ -16,6 +16,8 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  userRoles   UserRole[]
+
   refreshTokenSessions RefreshTokenSession[]
 
   @@map("users")
@@ -101,4 +103,29 @@ model TrustedDevice {
   @@index([trustedUntil])
 
   @@index([revokedAt])
+}
+
+model Role{
+  id    String    @id @default(uuid()) @db.Uuid
+  name  String    @unique
+  description   String
+
+  userRoles  UserRole[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+}
+
+model UserRole{
+  userId    String @db.Uuid
+  roleId    String @db.Uuid
+
+ user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@id([userId, roleId])
+  @@index([roleId])
 }
