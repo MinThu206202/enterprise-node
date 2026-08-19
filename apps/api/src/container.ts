@@ -66,6 +66,18 @@ import { DeleteRoleUseCase } from "../../../src/application/use-cases/roles/Dele
 import { GetAllRolesUseCase } from "../../../src/application/use-cases/roles/GetAllRolesUseCase.js";
 import { PrismaAuthorizationRepository } from "../../../src/infrastructure/repositories/PrismaAuthorizationRepository.js";
 import { AuthorizationService } from "../../../src/application/services/authorization/AuthorizationService.js";
+import { permissionRegistry } from "../../../src/application/services/authorization/PermissionRegistry.js";
+import { PermissionDefinitions } from "../../../src/application/services/authorization/PermissionDefinitions.js";
+import { PrismaPermissionRepository } from "../../../src/infrastructure/repositories/PrismaPermissionRepository.js";
+import { PermissionSynchronizer } from "../../../src/application/services/authorization/PermissionSynchronizer.js";
+
+// -----------------------------------------------------
+// Register permission modules
+// -----------------------------------------------------
+
+for (const definition of PermissionDefinitions) {
+  permissionRegistry.register(definition);
+}
 
 // -----------------------------------------------------
 // Configuration
@@ -157,10 +169,14 @@ export const welcomeEmailConsumer = new WelcomeEmailConsumer(
 // -----------------------------------------------------
 // Role
 // -----------------------------------------------------
-
 const roleRepository = new PrismaRoleRepository(prisma);
 
 const authorizationRepository = new PrismaAuthorizationRepository(prisma);
+
+const permissionRepository = new PrismaPermissionRepository(prisma);
+
+export const permissionSynchronizer =
+  new PermissionSynchronizer(permissionRepository);
 
 const authorizationService = new AuthorizationService(authorizationRepository);
 
@@ -368,6 +384,9 @@ export const container = {
   emailJobQueue,
   emailWorker,
 
+  permissionRegistry,
+  permissionRepository,
+
   roleRepository,
   authorizationRepository,
   authorizationService,
@@ -376,4 +395,5 @@ export const container = {
   getAllRolesUseCase,
   updateRoleUseCase,
   deleteRoleUseCase,
+  permissionSynchronizer,
 };

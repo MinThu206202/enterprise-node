@@ -107,4 +107,15 @@ export class PrismaPermissionRepository implements IPermissionRepository {
       where: { id },
     });
   }
+  async createIfNotExists(name: string): Promise<void> {
+    await this.prisma.permission.upsert({
+      where: {
+        name,
+      },
+      update: {},
+      create: {
+        name,
+      },
+    });
+  }
 }
