@@ -3,6 +3,8 @@ import type { FastifyInstance } from "fastify";
 import { container } from "../../container.js";
 import { AuthController } from "../../controllers/AuthController.js";
 
+import type { VerifyLoginOtpInput } from "../../../../../src/application/validation/auth/verifyLoginOtpSchema.js";
+
 import type { RegisterInput } from "../../../../../src/application/validation/auth/registerSchema.js";
 import type { LoginInput } from "../../../../../src/application/validation/auth/loginSchema.js";
 import { VerifyEmailInput } from "../../../../../src/application/validation/auth/verifyEmailSchema.js";
@@ -183,6 +185,22 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
     },
     async (request, reply) => {
       return controller.resetPassword(request, reply);
+    },
+  );
+
+  // verify login OTP (new device)
+  app.post<{ Body: VerifyLoginOtpInput }>(
+    "/auth/verify-login-otp",
+    {
+      config: {
+        rateLimit: {
+          max: 5,
+          timeWindow: "1 minute",
+        },
+      },
+    },
+    async (request, reply) => {
+      return controller.verifyLoginOtp(request, reply);
     },
   );
 }
