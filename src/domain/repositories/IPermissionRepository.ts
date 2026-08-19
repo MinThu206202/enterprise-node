@@ -1,16 +1,16 @@
 import { Permission } from "../entities/Permission.js";
 
 export interface IPermissionRepository {
-    create(permission: Permission):Promise<Permission>;
+  create(permission: Permission): Promise<Permission>;
 
-    findById(id : string):Promise<Permission | null>;
+  findById(id: string): Promise<Permission | null>;
 
-    findByName(name : string):Promise<Permission | null>;
+  findByName(name: string): Promise<Permission | null>;
 
-    findAll():Promise<Permission[]>;
+  findAll(): Promise<Permission[]>;
 
-    update(permission: Permission):Promise<Permission>;
+  update(permission: Permission): Promise<Permission>;
 
-    delete(id:string):Promise<void>;
-
+  delete(id: string): Promise<void>;
+  createIfNotExists(name: string): Promise<void>;
 }

@@ -5,12 +5,19 @@ import {
   welcomeEmailConsumer,
   outboxWorker,
   emailWorker,
+  permissionSynchronizer,
 } from "./container.js";
 
 const app = await createApp();
 
 async function bootstrap() {
   try {
+    // ---------------------------------------------
+    // Synchronize permissions
+    // ---------------------------------------------
+
+    await permissionSynchronizer.synchronize();
+
     // ---------------------------------------------
     // Connect RabbitMQ
     // ---------------------------------------------
@@ -22,7 +29,6 @@ async function bootstrap() {
     // ---------------------------------------------
 
     await welcomeEmailConsumer.start();
-
 
     // ---------------------------------------------
     // Start Outbox worker
