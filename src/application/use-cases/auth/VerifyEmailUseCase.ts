@@ -105,6 +105,16 @@ export class VerifyEmailUseCase {
       await this.unitOfWork.execute(async (tx) => {
         await tx.userRepository.save(user);
 
+        const userRole = await tx.roleRepository.findByName("USER");
+
+        if (!userRole) {
+          throw new Error(
+            "Default USER role not found. Run `pnpm prisma db seed` first.",
+          );
+        }
+
+        await tx.userRoleRepository.create(user.getId(), userRole.id);
+
         await tx.outboxRepository.create({
           type: AUTH_EVENTS.USER_REGISTERED,
           payload: {

@@ -1,4 +1,5 @@
 import type { PrismaClient } from "../../generated/prisma/client.js";
+import type { PrismaTransaction } from "../database/PrismaTransaction.js";
 import { RoleMapper } from "../../application/mappers/RoleMapper.js";
 import { Role } from "../../domain/entities/Role.js";
 import type { IRoleRepository } from "../../domain/repositories/IRoleRepository.js";
@@ -6,7 +7,7 @@ import type { CreateRoleInput } from "../../application/dto/roles/CreateRoleInpu
 import type { UpdateRoleInput } from "../../application/dto/roles/UpdateRoleInput.js";
 
 export class PrismaRoleRepository implements IRoleRepository {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(private readonly prisma: PrismaClient | PrismaTransaction) {}
 
   async findById(id: string): Promise<Role | null> {
     const role = await this.prisma.role.findUnique({
