@@ -8,26 +8,26 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(uuid()) @db.Uuid
-  email        String   @unique
+  id           String  @id @default(uuid()) @db.Uuid
+  email        String  @unique
   name         String
   passwordHash String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  userRoles   UserRole[]
+  userRoles UserRole[]
 
   refreshTokenSessions RefreshTokenSession[]
+  trustedDevices       TrustedDevice[]
 
   @@map("users")
-  trustedDevices TrustedDevice[]
 }
 
 model RefreshTokenSession {
-  id                String   @id @default(uuid()) @db.Uuid
-  tokenId           String   @unique
-  userId            String   @db.Uuid
+  id      String @id @default(uuid()) @db.Uuid
+  tokenId String @unique
+  userId  String @db.Uuid
 
   expiresAt         DateTime
   revokedAt         DateTime?
@@ -46,20 +46,20 @@ model RefreshTokenSession {
   @@index([revokedAt])
 }
 
-model OutboxMessage{
-  id   String  @id @default(uuid()) @db.Uuid
-  type String
-  payload Json
-  status OutboxStatus @default(PENDING)
-  attempts Int @default(0)
-  availableAt DateTime @default(now())
-  createdAt DateTime @default(now())
+model OutboxMessage {
+  id          String       @id @default(uuid()) @db.Uuid
+  type        String
+  payload     Json
+  status      OutboxStatus @default(PENDING)
+  attempts    Int          @default(0)
+  availableAt DateTime     @default(now())
+  createdAt   DateTime     @default(now())
   processedAt DateTime?
 
-  @@index([status , availableAt])
+  @@index([status, availableAt])
 }
 
-enum OutboxStatus{
+enum OutboxStatus {
   PENDING
   PROCESSING
   PUBLISHED
@@ -67,65 +67,83 @@ enum OutboxStatus{
 }
 
 model InboxMessage {
-  id String @id
-  type String
+  id          String   @id
+  type        String
   processedAt DateTime @default(now())
-  createdAt DateTime @default(now())
+  createdAt   DateTime @default(now())
 
   @@map("inbox_messages")
 }
 
 model TrustedDevice {
-  id            String    @id @default(uuid())
+  id String @id @default(uuid())
 
-  userId        String    @db.Uuid
+  userId String @db.Uuid
 
-  deviceId      String
-  deviceInfo    String?
-  ipAddress     String?
+  deviceId   String
+  deviceInfo String?
+  ipAddress  String?
 
-  firstSeenAt   DateTime  @default(now())
-  lastSeenAt    DateTime  @default(now())
+  firstSeenAt DateTime @default(now())
+  lastSeenAt  DateTime @default(now())
 
-  trustedUntil  DateTime
+  trustedUntil DateTime
 
-  revokedAt     DateTime?
+  revokedAt DateTime?
 
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, deviceId])
-
   @@index([userId])
-
   @@index([trustedUntil])
-
   @@index([revokedAt])
 }
 
-model Role{
-  id    String    @id @default(uuid()) @db.Uuid
-  name  String    @unique
-  description   String
+model Role {
+  id          String @id @default(uuid()) @db.Uuid
+  name        String @unique
+  description String
 
-  userRoles  UserRole[]
+  userRoles       UserRole[]
+  rolePermissions RolePermission[]
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-model UserRole{
-  userId    String @db.Uuid
-  roleId    String @db.Uuid
+model UserRole {
+  userId String @db.Uuid
+  roleId String @db.Uuid
 
- user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  role      Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 
   @@id([userId, roleId])
   @@index([roleId])
+}
+
+model Permission {
+  id          String  @id @default(uuid()) @db.Uuid
+  name        String  @unique
+  description String?
+
+  rolePermissions RolePermission[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model RolePermission {
+  roleId       String @db.Uuid
+  permissionId String @db.Uuid
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
 }

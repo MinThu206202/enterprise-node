@@ -2,6 +2,8 @@ import type { FastifyInstance } from "fastify";
 
 import { container } from "../../container.js";
 import { RoleController } from "../../controllers/RoleController.js";
+import { authenticate } from "../../hooks/authenticate.js";
+import { authorize } from "../../hooks/authorize.js";
 
 export async function roleRoutes(app: FastifyInstance): Promise<void> {
   const controller = new RoleController(
@@ -12,20 +14,61 @@ export async function roleRoutes(app: FastifyInstance): Promise<void> {
     container.deleteRoleUseCase,
   );
 
-  app.post("/roles", async (request, reply) => {
-    return controller.create(request, reply);
-  });
+  app.post(
+    "/roles",
+    {
+      preHandler: [
+        authenticate,
+        authorize(container.authorizationService, {
+          permissions: ["roles:create"],
+        }),
+      ],
+    },
+    async (request, reply) => {
+      return controller.create(request, reply);
+    },
+  );
 
-  app.get("/roles", async (request, reply) => {
-    return controller.getAll(request, reply);
-  });
+  app.get(
+    "/roles",
+    {
+      preHandler: [
+        authenticate,
+        authorize(container.authorizationService, {
+          permissions: ["roles:read"],
+        }),
+      ],
+    },
+    async (request, reply) => {
+      return controller.getAll(request, reply);
+    },
+  );
 
-  app.get<{ Params: { id: string } }>("/roles/:id", async (request, reply) => {
-    return controller.getById(request, reply);
-  });
+  app.get<{ Params: { id: string } }>(
+    "/roles/:id",
+    {
+      preHandler: [
+        authenticate,
+        authorize(container.authorizationService, {
+          permissions: ["roles:read"],
+        }),
+      ],
+    },
+    async (request, reply) => {
+      return controller.getById(request, reply);
+    },
+  );
 
   app.put<{ Params: { id: string } }>(
     "/roles/:id",
+    {
+      preHandler: [
+        authenticate,
+        authorize(container.authorizationService, {
+          permissions: ["roles:update"],
+        }),
+      ],
+    },
     async (request, reply) => {
       return controller.update(request, reply);
     },
@@ -33,6 +76,14 @@ export async function roleRoutes(app: FastifyInstance): Promise<void> {
 
   app.delete<{ Params: { id: string } }>(
     "/roles/:id",
+    {
+      preHandler: [
+        authenticate,
+        authorize(container.authorizationService, {
+          permissions: ["roles:delete"],
+        }),
+      ],
+    },
     async (request, reply) => {
       return controller.delete(request, reply);
     },

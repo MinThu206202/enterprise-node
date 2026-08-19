@@ -64,6 +64,8 @@ import { GetRoleUseCase } from "../../../src/application/use-cases/roles/GetRole
 import { UpdateRoleUseCase } from "../../../src/application/use-cases/roles/UpdateRoleUseCase.js";
 import { DeleteRoleUseCase } from "../../../src/application/use-cases/roles/DeleteRoleUseCase.js";
 import { GetAllRolesUseCase } from "../../../src/application/use-cases/roles/GetAllRolesUseCase.js";
+import { PrismaAuthorizationRepository } from "../../../src/infrastructure/repositories/PrismaAuthorizationRepository.js";
+import { AuthorizationService } from "../../../src/application/services/authorization/AuthorizationService.js";
 
 // -----------------------------------------------------
 // Configuration
@@ -157,6 +159,10 @@ export const welcomeEmailConsumer = new WelcomeEmailConsumer(
 // -----------------------------------------------------
 
 const roleRepository = new PrismaRoleRepository(prisma);
+
+const authorizationRepository = new PrismaAuthorizationRepository(prisma);
+
+const authorizationService = new AuthorizationService(authorizationRepository);
 
 const createRoleUseCase = new CreateRoleUseCase(roleRepository);
 
@@ -361,7 +367,10 @@ export const container = {
   //email worker
   emailJobQueue,
   emailWorker,
+
   roleRepository,
+  authorizationRepository,
+  authorizationService,
   createRoleUseCase,
   getRoleUseCase,
   getAllRolesUseCase,
