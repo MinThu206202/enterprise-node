@@ -14,6 +14,10 @@ export const PermissionDefinitions: PermissionModule[] = [
     resource: "transfer",
     actions: ["create", "update"],
   },
+  {
+    resource: "user-roles",
+    actions: ["assign", "delete"],
+  },
 
   {
     resource: "permissions",

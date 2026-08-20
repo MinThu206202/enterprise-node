@@ -113,7 +113,7 @@ export class VerifyEmailUseCase {
           );
         }
 
-        await tx.userRoleRepository.create(user.getId(), userRole.id);
+        await tx.userRoleRepository.assign(user.getId(), userRole.id);
 
         await tx.outboxRepository.create({
           type: AUTH_EVENTS.USER_REGISTERED,

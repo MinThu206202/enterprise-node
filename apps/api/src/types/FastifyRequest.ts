@@ -13,6 +13,9 @@ declare module "fastify" {
   }
 
   interface FastifyContextConfig {
-    resource?: string;
+    permission?: {
+      resource: string;
+      action: string;
+    };
   }
 }
