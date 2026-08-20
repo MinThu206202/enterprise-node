@@ -70,6 +70,12 @@ import { permissionRegistry } from "../../../src/application/services/authorizat
 import { PermissionDefinitions } from "../../../src/application/services/authorization/PermissionDefinitions.js";
 import { PrismaPermissionRepository } from "../../../src/infrastructure/repositories/PrismaPermissionRepository.js";
 import { PermissionSynchronizer } from "../../../src/application/services/authorization/PermissionSynchronizer.js";
+import { PrismaRolePermissionRepository } from "../../../src/infrastructure/repositories/PrismaRolePermissionRepository.js";
+import { AssignPermissionToRoleUseCase } from "../../../src/application/use-cases/rolePermissions/AssignPermissionToRoleUseCase.js";
+import { RemovePermissionFromRoleUseCase } from "../../../src/application/use-cases/rolePermissions/RemovePermissionFromRoleUseCase.js";
+import { GetRolePermissionsUseCase } from "../../../src/application/use-cases/rolePermissions/GetRolePermissionsUseCase.js";
+import { AssignRoleToUserUseCase } from "../../../src/application/use-cases/userRoles/AssignRoleToUserUseCase.js";
+import { PrismaUserRoleRepository } from "../../../src/infrastructure/repositories/PrismaUserRoleRepository.js";
 
 // -----------------------------------------------------
 // Register permission modules
@@ -175,8 +181,23 @@ const authorizationRepository = new PrismaAuthorizationRepository(prisma);
 
 const permissionRepository = new PrismaPermissionRepository(prisma);
 
-export const permissionSynchronizer =
-  new PermissionSynchronizer(permissionRepository);
+export const permissionSynchronizer = new PermissionSynchronizer(
+  permissionRepository,
+);
+
+const rolePermissionRepository = new PrismaRolePermissionRepository();
+
+const getRolePermissionsUseCase = new GetRolePermissionsUseCase(
+  rolePermissionRepository,
+);
+
+const assignPermissionToRoleUseCase = new AssignPermissionToRoleUseCase(
+  rolePermissionRepository,
+);
+
+const removePermissionFromRoleUseCase = new RemovePermissionFromRoleUseCase(
+  rolePermissionRepository,
+);
 
 const authorizationService = new AuthorizationService(authorizationRepository);
 
@@ -190,6 +211,17 @@ const updateRoleUseCase = new UpdateRoleUseCase(roleRepository);
 
 const deleteRoleUseCase = new DeleteRoleUseCase(roleRepository);
 
+// -----------------------------------------------------
+// Assing ROle
+// -----------------------------------------------------
+
+const userRoleRepository = new PrismaUserRoleRepository(prisma);
+
+const assignRoleToUserUseCase = new AssignRoleToUserUseCase(
+  userRepository,
+  roleRepository,
+  userRoleRepository,
+);
 // -----------------------------------------------------
 // Outbox Worker
 // -----------------------------------------------------
@@ -388,6 +420,7 @@ export const container = {
   permissionRepository,
 
   roleRepository,
+  rolePermissionRepository,
   authorizationRepository,
   authorizationService,
   createRoleUseCase,
@@ -396,4 +429,8 @@ export const container = {
   updateRoleUseCase,
   deleteRoleUseCase,
   permissionSynchronizer,
+  assignPermissionToRoleUseCase,
+  removePermissionFromRoleUseCase,
+  getRolePermissionsUseCase,
+  assignRoleToUserUseCase,
 };

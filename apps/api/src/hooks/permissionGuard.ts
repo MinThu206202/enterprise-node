@@ -4,6 +4,7 @@ import type { IAuthorizationService } from "../../../../src/application/services
 
 import { PermissionResolver } from "../../../../src/application/services/authorization/PermissionResolver.js";
 
+import { AppError } from "../../../../src/shared/errors/AppError.js";
 import { ForbiddenError } from "../../../../src/shared/errors/ForbiddenError.js";
 
 
@@ -37,10 +38,22 @@ export function permissionGuard(
       );
     }
 
-    const authorization =
-      await authorizationService.getUserAuthorization(
-        request.userId,
+    let authorization;
+
+    try {
+      authorization =
+        await authorizationService.getUserAuthorization(
+          request.userId,
+        );
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+
+      throw new ForbiddenError(
+        "Unable to verify permissions.",
       );
+    }
 
     request.authorization = authorization;
 

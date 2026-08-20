@@ -5,7 +5,7 @@ import type { IUserRoleRepository } from "../../domain/repositories/IUserRoleRep
 export class PrismaUserRoleRepository implements IUserRoleRepository {
   constructor(private readonly prisma: PrismaClient | PrismaTransaction) {}
 
-  async create(userId: string, roleId: string): Promise<void> {
+  async assign(userId: string, roleId: string): Promise<void> {
     await this.prisma.userRole.create({
       data: {
         userId,
@@ -14,10 +14,40 @@ export class PrismaUserRoleRepository implements IUserRoleRepository {
     });
   }
 
-  async findByUserId(userId: string): Promise<{ roleId: string }[]> {
-    return this.prisma.userRole.findMany({
-      where: { userId },
-      select: { roleId: true },
+  async remove(userId: string, roleId: string): Promise<void> {
+    await this.prisma.userRole.delete({
+      where: {
+        userId_roleId: {
+          userId,
+          roleId,
+        },
+      },
     });
+  }
+
+  async exists(userId: string, roleId: string): Promise<boolean> {
+    const userRole = await this.prisma.userRole.findUnique({
+      where: {
+        userId_roleId: {
+          userId,
+          roleId,
+        },
+      },
+    });
+
+    return userRole !== null;
+  }
+
+  async findRolesByUserId(userId: string): Promise<string[]> {
+    const userRoles = await this.prisma.userRole.findMany({
+      where: {
+        userId,
+      },
+      select: {
+        roleId: true,
+      },
+    });
+
+    return userRoles.map((userRole) => userRole.roleId);
   }
 }

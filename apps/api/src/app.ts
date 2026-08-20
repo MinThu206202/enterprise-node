@@ -11,10 +11,12 @@ import { userRoutes } from "./routes/v1/userRoutes.js";
 import { authRoutes } from "./routes/v1/authRoutes.js";
 import { meRoutes } from "./routes/v1/meRoutes.js";
 import { roleRoutes } from "./routes/v1/roleRoutes.js";
+import { rolePermissionRoutes } from "./routes/v1/rolePermissionRoutes.js";
 
 import { API_VERSION } from "../../../src/shared/http/ApiVersion.js";
 import { registerRedis } from "./plugins/redis.js";
 import { registerSwagger, swaggerCsp } from "./plugins/swagger.js";
+import { userRoleRoutes } from "./routes/v1/userRoleRoutes.js";
 
 export function createApp(): FastifyInstance {
   const app = Fastify({
@@ -74,6 +76,14 @@ export function createApp(): FastifyInstance {
 
   app.register(roleRoutes, {
     prefix: `/${API_VERSION}`,
+  });
+
+  app.register(rolePermissionRoutes, {
+    prefix: "/api/v1",
+  });
+
+  app.register(userRoleRoutes, {
+    prefix: "/api/v1",
   });
 
   return app;
