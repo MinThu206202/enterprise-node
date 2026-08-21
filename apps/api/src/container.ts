@@ -75,6 +75,7 @@ import { AssignPermissionToRoleUseCase } from "../../../src/application/use-case
 import { RemovePermissionFromRoleUseCase } from "../../../src/application/use-cases/rolePermissions/RemovePermissionFromRoleUseCase.js";
 import { GetRolePermissionsUseCase } from "../../../src/application/use-cases/rolePermissions/GetRolePermissionsUseCase.js";
 import { AssignRoleToUserUseCase } from "../../../src/application/use-cases/userRoles/AssignRoleToUserUseCase.js";
+import { RemoveRoleFromUserUseCase } from "../../../src/application/use-cases/userRoles/RemoveRoleFromUserUseCase.js";
 import { PrismaUserRoleRepository } from "../../../src/infrastructure/repositories/PrismaUserRoleRepository.js";
 
 // -----------------------------------------------------
@@ -218,6 +219,12 @@ const deleteRoleUseCase = new DeleteRoleUseCase(roleRepository);
 const userRoleRepository = new PrismaUserRoleRepository(prisma);
 
 const assignRoleToUserUseCase = new AssignRoleToUserUseCase(
+  userRepository,
+  roleRepository,
+  userRoleRepository,
+);
+
+const removeRoleFromUserUseCase = new RemoveRoleFromUserUseCase(
   userRepository,
   roleRepository,
   userRoleRepository,
@@ -433,4 +440,6 @@ export const container = {
   removePermissionFromRoleUseCase,
   getRolePermissionsUseCase,
   assignRoleToUserUseCase,
+  removeRoleFromUserUseCase,
+  userRoleRepository,
 };
