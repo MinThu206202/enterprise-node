@@ -4,4 +4,6 @@ export interface UserResponseDto {
   name: string;
   createdAt: Date;
   updatedAt: Date;
+  roles?: string[];
+  permissions?: string[];
 }
