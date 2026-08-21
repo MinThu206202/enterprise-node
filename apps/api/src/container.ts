@@ -365,6 +365,7 @@ const verifyLoginOtpUseCase = new VerifyLoginOtpUseCase(
 
 const getCurrentUserUseCase = new GetCurrentUserUseCase(
   userRepository,
+  authorizationService,
   appLogger,
 );
 

@@ -32,8 +32,12 @@ export class UserController {
   }
 
   async getMe(request: FastifyRequest, reply: FastifyReply) {
-    const user = await this.getCurrentUserUseCase.execute(request.userId!);
+    const { user, authorization } = await this.getCurrentUserUseCase.execute(
+      request.userId!,
+    );
 
-    return reply.status(200).send(UserMapper.toResponse(user));
+    return reply
+      .status(200)
+      .send(UserMapper.toResponse(user, authorization));
   }
 }
