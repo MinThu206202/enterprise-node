@@ -24,7 +24,6 @@ import type { RegisterUserUseCase } from "../../../../src/application/use-cases/
 
 import { ValidationError } from "../../../../src/shared/errors/ValidationError.js";
 import { RefreshTokenUseCase } from "../../../../src/application/use-cases/auth/RefreshTokenUseCase.js";
-import { createApiMeta } from "../../../../src/shared/http/ApiResponseBuilder.js";
 import { resendVerificationSchema } from "../../../../src/application/validation/auth/resendVerificationSchema.js";
 import { ResendVerificationUseCase } from "../../../../src/application/use-cases/auth/ResendVerificationUseCase.js";
 
@@ -83,11 +82,6 @@ export class AuthController {
 
     return reply.status(201).send({
       verificationId: registration.verificationId,
-      meta: createApiMeta({
-        requestId: request.id,
-        startTime: request.startTime,
-        status: "SUCCESS",
-      }),
     });
   }
 
@@ -164,15 +158,7 @@ export class AuthController {
 
     const user = await this.verifyEmailUseCase.execute(input, context);
 
-    return reply.status(200).send({
-      data: user,
-
-      meta: createApiMeta({
-        requestId: request.id,
-        startTime: request.startTime,
-        status: "SUCCESS",
-      }),
-    });
+    return reply.status(200).send(user);
   }
 
   async resendVerification(request: FastifyRequest, reply: FastifyReply) {
@@ -187,15 +173,7 @@ export class AuthController {
     const resultData = await this.resendVerificationUseCase.execute(
       result.data,
     );
-    return reply.status(200).send({
-      data: resultData,
-
-      meta: createApiMeta({
-        requestId: request.id,
-        startTime: request.startTime,
-        status: "SUCCESS",
-      }),
-    });
+    return reply.status(200).send(resultData);
   }
 
   async requestForgotPassword(
@@ -212,15 +190,7 @@ export class AuthController {
 
     const data = await this.requestForgotPasswordUseCase.execute(result.data);
 
-    return reply.status(200).send({
-      data,
-
-      meta: createApiMeta({
-        requestId: request.id,
-        startTime: request.startTime,
-        status: "SUCCESS",
-      }),
-    });
+    return reply.status(200).send(data);
   }
 
   async resendForgotPassword(
@@ -237,15 +207,7 @@ export class AuthController {
 
     const data = await this.resendForgotPasswordUseCase.execute(result.data);
 
-    return reply.status(200).send({
-      data,
-
-      meta: createApiMeta({
-        requestId: request.id,
-        startTime: request.startTime,
-        status: "SUCCESS",
-      }),
-    });
+    return reply.status(200).send(data);
   }
 
   async verifyForgotPassword(
@@ -262,15 +224,7 @@ export class AuthController {
 
     const data = await this.verifyForgotPasswordUseCase.execute(result.data);
 
-    return reply.status(200).send({
-      data,
-
-      meta: createApiMeta({
-        requestId: request.id,
-        startTime: request.startTime,
-        status: "SUCCESS",
-      }),
-    });
+    return reply.status(200).send(data);
   }
 
   async resetPassword(
@@ -287,15 +241,7 @@ export class AuthController {
 
     const data = await this.resetPasswordUseCase.execute(result.data);
 
-    return reply.status(200).send({
-      data,
-
-      meta: createApiMeta({
-        requestId: request.id,
-        startTime: request.startTime,
-        status: "SUCCESS",
-      }),
-    });
+    return reply.status(200).send(data);
   }
 
   async verifyLoginOtp(request: FastifyRequest, reply: FastifyReply) {
@@ -303,13 +249,6 @@ export class AuthController {
 
     const result = await this.verifyLoginOtpUseCase.execute(input);
 
-    return reply.send({
-      data: result,
-      meta: {
-        requestId: request.id,
-        timestamp: new Date().toISOString(),
-        status: "SUCCESS",
-      },
-    });
+    return reply.status(200).send(result);
   }
 }

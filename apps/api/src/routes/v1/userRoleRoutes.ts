@@ -49,13 +49,13 @@ export async function userRoleRoutes(fastify: FastifyInstance): Promise<void> {
         roleIds.map((id) => container.roleRepository.findById(id)),
       );
 
-      return reply.status(200).send({
-        data: roles.filter(Boolean).map((role) => ({
+      return reply.status(200).send(
+        roles.filter(Boolean).map((role) => ({
           id: role!.id,
           name: role!.name,
           description: role!.description,
         })),
-      });
+      );
     },
   );
 
