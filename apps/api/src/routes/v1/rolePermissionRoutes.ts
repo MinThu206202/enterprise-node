@@ -12,6 +12,7 @@ export async function rolePermissionRoutes(
     container.assignPermissionToRoleUseCase,
     container.removePermissionFromRoleUseCase,
     container.getRolePermissionsUseCase,
+    container.getRoleUseCase,
   );
 
   app.post<{

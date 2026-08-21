@@ -77,6 +77,7 @@ import { GetRolePermissionsUseCase } from "../../../src/application/use-cases/ro
 import { AssignRoleToUserUseCase } from "../../../src/application/use-cases/userRoles/AssignRoleToUserUseCase.js";
 import { RemoveRoleFromUserUseCase } from "../../../src/application/use-cases/userRoles/RemoveRoleFromUserUseCase.js";
 import { PrismaUserRoleRepository } from "../../../src/infrastructure/repositories/PrismaUserRoleRepository.js";
+import { RedisAuthorizationCache } from "../../../src/infrastructure/redis/RedisAuthorizationCache.js";
 
 // -----------------------------------------------------
 // Register permission modules
@@ -180,6 +181,8 @@ const roleRepository = new PrismaRoleRepository(prisma);
 
 const authorizationRepository = new PrismaAuthorizationRepository(prisma);
 
+const authorizationCache = new RedisAuthorizationCache();
+
 const permissionRepository = new PrismaPermissionRepository(prisma);
 
 export const permissionSynchronizer = new PermissionSynchronizer(
@@ -192,15 +195,7 @@ const getRolePermissionsUseCase = new GetRolePermissionsUseCase(
   rolePermissionRepository,
 );
 
-const assignPermissionToRoleUseCase = new AssignPermissionToRoleUseCase(
-  rolePermissionRepository,
-);
-
-const removePermissionFromRoleUseCase = new RemovePermissionFromRoleUseCase(
-  rolePermissionRepository,
-);
-
-const authorizationService = new AuthorizationService(authorizationRepository);
+const authorizationService = new AuthorizationService(authorizationRepository,authorizationCache);
 
 const createRoleUseCase = new CreateRoleUseCase(roleRepository);
 
@@ -228,6 +223,18 @@ const removeRoleFromUserUseCase = new RemoveRoleFromUserUseCase(
   userRepository,
   roleRepository,
   userRoleRepository,
+);
+
+const assignPermissionToRoleUseCase = new AssignPermissionToRoleUseCase(
+  rolePermissionRepository,
+  userRoleRepository,
+  authorizationCache,
+);
+
+const removePermissionFromRoleUseCase = new RemovePermissionFromRoleUseCase(
+  rolePermissionRepository,
+  userRoleRepository,
+  authorizationCache,
 );
 // -----------------------------------------------------
 // Outbox Worker
@@ -425,6 +432,8 @@ export const container = {
 
   permissionRegistry,
   permissionRepository,
+
+  authorizationCache,
 
   roleRepository,
   rolePermissionRepository,

@@ -137,7 +137,7 @@ export class AuthController {
       refreshToken: body.refreshToken,
     });
 
-    return reply.status(204).send();
+    return reply.status(200).send({ message: "Logged out successfully" });
   }
 
   async verifyEmail(request: FastifyRequest, reply: FastifyReply) {

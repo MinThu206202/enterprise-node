@@ -1,6 +1,8 @@
 import type { IUserRepository } from "../../../domain/repositories/IUserRepository.js";
 import type { IRoleRepository } from "../../../domain/repositories/IRoleRepository.js";
 import type { IUserRoleRepository } from "../../../domain/repositories/IUserRoleRepository.js";
+import type { IAuthorizationCache } from "../../services/authorization/IAuthorizationCache.js";
+
 import { ConflictError } from "../../../shared/errors/ConflictError.js";
 import { NotFoundError } from "../../../shared/errors/NotFoundError.js";
 
@@ -9,6 +11,7 @@ export class AssignRoleToUserUseCase {
     private readonly userRepository: IUserRepository,
     private readonly roleRepository: IRoleRepository,
     private readonly userRoleRepository: IUserRoleRepository,
+    private readonly authorizationCache: IAuthorizationCache,
   ) {}
 
   async execute(userId: string, roleId: string): Promise<void> {
@@ -34,5 +37,8 @@ export class AssignRoleToUserUseCase {
     }
 
     await this.userRoleRepository.assign(userId, roleId);
+
+    // Authorization data is now stale.
+    await this.authorizationCache.invalidate(userId);
   }
 }

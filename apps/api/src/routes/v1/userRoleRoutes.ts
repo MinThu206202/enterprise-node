@@ -10,22 +10,8 @@ export async function userRoleRoutes(fastify: FastifyInstance): Promise<void> {
   const controller = new UserRoleController(
     container.assignRoleToUserUseCase,
     container.removeRoleFromUserUseCase,
-  );
-
-  fastify.addContentTypeParser(
-    "application/json",
-    { parseAs: "string" },
-    (_req, body, done) => {
-      const str = typeof body === "string" ? body.trim() : "";
-      if (str === "") {
-        return done(null, {});
-      }
-      try {
-        done(null, JSON.parse(str));
-      } catch (err) {
-        done(err as Error, undefined);
-      }
-    },
+    container.userRoleRepository,
+    container.roleRepository,
   );
 
   fastify.get<{ Params: { userId: string } }>(
