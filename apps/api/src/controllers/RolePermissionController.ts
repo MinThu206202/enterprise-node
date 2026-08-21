@@ -3,12 +3,14 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import { AssignPermissionToRoleUseCase } from "../../../../src/application/use-cases/rolePermissions/AssignPermissionToRoleUseCase.js";
 import { RemovePermissionFromRoleUseCase } from "../../../../src/application/use-cases/rolePermissions/RemovePermissionFromRoleUseCase.js";
 import { GetRolePermissionsUseCase } from "../../../../src/application/use-cases/rolePermissions/GetRolePermissionsUseCase.js";
+import { GetRoleUseCase } from "../../../../src/application/use-cases/roles/GetRoleUseCase.js";
 
 export class RolePermissionController {
   constructor(
     private readonly assignPermissionToRoleUseCase: AssignPermissionToRoleUseCase,
     private readonly removePermissionFromRoleUseCase: RemovePermissionFromRoleUseCase,
     private readonly getRolePermissionsUseCase: GetRolePermissionsUseCase,
+    private readonly getRoleUseCase: GetRoleUseCase,
   ) {}
 
   async assign(
@@ -25,7 +27,16 @@ export class RolePermissionController {
       permissionId: request.params.permissionId,
     });
 
-    reply.code(204).send();
+    const [role, permissions] = await Promise.all([
+      this.getRoleUseCase.execute(request.params.roleId),
+      this.getRolePermissionsUseCase.execute(request.params.roleId),
+    ]);
+
+    reply.code(200).send({
+      message: "Permission assigned to role successfully",
+      role,
+      permissions,
+    });
   }
 
   async remove(
@@ -42,7 +53,16 @@ export class RolePermissionController {
       permissionId: request.params.permissionId,
     });
 
-    reply.code(204).send();
+    const [role, permissions] = await Promise.all([
+      this.getRoleUseCase.execute(request.params.roleId),
+      this.getRolePermissionsUseCase.execute(request.params.roleId),
+    ]);
+
+    reply.code(200).send({
+      message: "Permission removed from role successfully",
+      role,
+      permissions,
+    });
   }
 
   async getPermissions(
@@ -53,10 +73,11 @@ export class RolePermissionController {
     }>,
     reply: FastifyReply,
   ): Promise<void> {
-    const permissions = await this.getRolePermissionsUseCase.execute(
-      request.params.roleId,
-    );
+    const [role, permissions] = await Promise.all([
+      this.getRoleUseCase.execute(request.params.roleId),
+      this.getRolePermissionsUseCase.execute(request.params.roleId),
+    ]);
 
-    reply.code(200).send(permissions);
+    reply.code(200).send({ role, permissions });
   }
 }

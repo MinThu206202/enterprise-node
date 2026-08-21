@@ -89,6 +89,6 @@ export class RoleController {
   ) {
     await this.deleteRoleUseCase.execute(request.params.id);
 
-    return reply.status(204).send();
+    return reply.status(200).send({ message: "Role deleted successfully" });
   }
 }

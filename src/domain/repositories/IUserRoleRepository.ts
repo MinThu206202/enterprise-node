@@ -6,4 +6,6 @@ export interface IUserRoleRepository {
   exists(userId: string, roleId: string): Promise<boolean>;
 
   findRolesByUserId(userId: string): Promise<string[]>;
+
+  findUserIdsByRoleId(roleId: string): Promise<string[]>;
 }

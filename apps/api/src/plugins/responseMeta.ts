@@ -1,8 +1,9 @@
 import type { FastifyInstance } from "fastify";
+import fp from "fastify-plugin";
 
 import { createApiMeta } from "../../../../src/shared/http/ApiResponseBuilder.js";
 
-export async function responseMetaPlugin(app: FastifyInstance): Promise<void> {
+export const responseMetaPlugin = fp(async (app: FastifyInstance) => {
   app.addHook("onSend", async (request, reply, payload) => {
     // Keep OpenAPI/Swagger payloads untouched.
     if (request.url.startsWith("/swagger")) {
@@ -55,4 +56,4 @@ export async function responseMetaPlugin(app: FastifyInstance): Promise<void> {
       return payload;
     }
   });
-}
+});

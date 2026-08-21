@@ -24,6 +24,28 @@ export function createApp(): FastifyInstance {
     logger: true,
   });
 
+  // Tolerate empty JSON bodies (e.g. POST/DELETE with no payload)
+  app.addContentTypeParser(
+    "application/json",
+    { parseAs: "string" },
+    (_req, body, done) => {
+      const str = typeof body === "string" ? body.trim() : "";
+      if (str === "") {
+        return done(null, {});
+      }
+      try {
+        done(null, JSON.parse(str));
+      } catch (err) {
+        done(err as Error, undefined);
+      }
+    },
+  );
+
+  // Accept any other content type (routes read params, not bodies)
+  app.addContentTypeParser("*", (_req, body, done) => {
+    done(null, body);
+  });
+
   registerErrorHandler(app);
 
   // Must register before Helmet so this onSend runs after Helmet and can
