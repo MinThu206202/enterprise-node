@@ -33,9 +33,7 @@ export class RoleController {
 
     const role = await this.createRoleUseCase.execute(result.data);
 
-    return reply.status(201).send({
-      data: role,
-    });
+    return reply.status(201).send(role);
   }
 
   async getById(
@@ -48,17 +46,13 @@ export class RoleController {
   ) {
     const role = await this.getRoleUseCase.execute(request.params.id);
 
-    return reply.status(200).send({
-      data: role,
-    });
+    return reply.status(200).send(role);
   }
 
   async getAll(_request: FastifyRequest, reply: FastifyReply) {
     const roles = await this.getAllRolesUseCase.execute();
 
-    return reply.status(200).send({
-      data: roles,
-    });
+    return reply.status(200).send(roles);
   }
 
   async update(
@@ -82,9 +76,7 @@ export class RoleController {
       result.data,
     );
 
-    return reply.status(200).send({
-      data: role,
-    });
+    return reply.status(200).send(role);
   }
 
   async delete(

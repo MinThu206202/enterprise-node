@@ -57,8 +57,6 @@ export class RolePermissionController {
       request.params.roleId,
     );
 
-    reply.code(200).send({
-      data: permissions,
-    });
+    reply.code(200).send(permissions);
   }
 }

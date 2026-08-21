@@ -10,12 +10,12 @@ export class PermissionController {
   async getAll(_request: FastifyRequest, reply: FastifyReply) {
     const permissions = await this.permissionRepository.findAll();
 
-    return reply.status(200).send({
-      data: permissions.map((p) => ({
+    return reply.status(200).send(
+      permissions.map((p) => ({
         id: p.id,
         name: p.name,
         description: p.description,
       })),
-    });
+    );
   }
 }
