@@ -1,5 +1,5 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { AssignRoleToUserUseCase } from "../../../../src/application/use-cases/users/AssignRoleToUserUseCase.js";
+import { AssignRoleToUserUseCase } from "../../../../src/application/use-cases/userRoles/AssignRoleToUserUseCase.js";
 import { RemoveRoleFromUserUseCase } from "../../../../src/application/use-cases/userRoles/RemoveRoleFromUserUseCase.js";
 
 export class UserRoleController {

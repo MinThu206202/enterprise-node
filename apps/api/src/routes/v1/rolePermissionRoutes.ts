@@ -23,10 +23,8 @@ export async function rolePermissionRoutes(
     "/roles/:roleId/permissions/:permissionId",
     {
       config: {
-        permission: {
-          resource: "roles",
-          action: "update",
-        },
+        resource: "roles",
+        action: "update",
       },
 
       preHandler: [
@@ -57,10 +55,8 @@ export async function rolePermissionRoutes(
     "/roles/:roleId/permissions/:permissionId",
     {
       config: {
-        permission: {
-          resource: "roles",
-          action: "update",
-        },
+        resource: "roles",
+        action: "update",
       },
 
       preHandler: [
@@ -86,10 +82,8 @@ export async function rolePermissionRoutes(
     "/roles/:roleId/permissions",
     {
       config: {
-        permission: {
-          resource: "roles",
-          action: "read",
-        },
+        resource: "roles",
+        action: "read",
       },
 
       preHandler: [

@@ -17,6 +17,7 @@ import { API_VERSION } from "../../../src/shared/http/ApiVersion.js";
 import { registerRedis } from "./plugins/redis.js";
 import { registerSwagger, swaggerCsp } from "./plugins/swagger.js";
 import { userRoleRoutes } from "./routes/v1/userRoleRoutes.js";
+import { permissionRoutes } from "./routes/v1/permissionRoutes.js";
 
 export function createApp(): FastifyInstance {
   const app = Fastify({
@@ -79,11 +80,15 @@ export function createApp(): FastifyInstance {
   });
 
   app.register(rolePermissionRoutes, {
-    prefix: "/api/v1",
+    prefix: `/${API_VERSION}`,
   });
 
   app.register(userRoleRoutes, {
-    prefix: "/api/v1",
+    prefix: `/${API_VERSION}`,
+  });
+
+  app.register(permissionRoutes, {
+    prefix: `/${API_VERSION}`,
   });
 
   return app;

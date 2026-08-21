@@ -8,7 +8,7 @@ export const PermissionDefinitions: PermissionModule[] = [
 
   {
     resource: "roles",
-    actions: ["create", "update"],
+    actions: ["create", "read", "update", "delete"],
   },
   {
     resource: "transfer",
@@ -16,7 +16,7 @@ export const PermissionDefinitions: PermissionModule[] = [
   },
   {
     resource: "user-roles",
-    actions: ["assign", "delete"],
+    actions: ["read", "assign", "delete"],
   },
 
   {
