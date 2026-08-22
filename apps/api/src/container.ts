@@ -45,6 +45,8 @@ import { VerifyLoginOtpUseCase } from "../../../src/application/use-cases/auth/V
 
 // User use cases
 import { GetCurrentUserUseCase } from "../../../src/application/use-cases/users/GetCurrentUserUseCase.js";
+import { GetAllUsersUseCase } from "../../../src/application/use-cases/users/GetAllUsersUseCase.js";
+import { GetUserByIdUseCase } from "../../../src/application/use-cases/users/GetUserByIdUseCase.js";
 
 // Messaging
 import { rabbitmqClient } from "../../../src/infrastructure/messaging/rabbitmq/rabbitmqClient.js";
@@ -203,26 +205,36 @@ const getRoleUseCase = new GetRoleUseCase(roleRepository);
 
 const getAllRolesUseCase = new GetAllRolesUseCase(roleRepository);
 
-const updateRoleUseCase = new UpdateRoleUseCase(roleRepository);
+const userRoleRepository = new PrismaUserRoleRepository(prisma);
 
-const deleteRoleUseCase = new DeleteRoleUseCase(roleRepository);
+const updateRoleUseCase = new UpdateRoleUseCase(
+  roleRepository,
+  userRoleRepository,
+  authorizationCache,
+);
+
+const deleteRoleUseCase = new DeleteRoleUseCase(
+  roleRepository,
+  userRoleRepository,
+  authorizationCache,
+);
 
 // -----------------------------------------------------
 // Assing ROle
 // -----------------------------------------------------
 
-const userRoleRepository = new PrismaUserRoleRepository(prisma);
-
 const assignRoleToUserUseCase = new AssignRoleToUserUseCase(
   userRepository,
   roleRepository,
   userRoleRepository,
+  authorizationCache,
 );
 
 const removeRoleFromUserUseCase = new RemoveRoleFromUserUseCase(
   userRepository,
   roleRepository,
   userRoleRepository,
+  authorizationCache,
 );
 
 const assignPermissionToRoleUseCase = new AssignPermissionToRoleUseCase(
@@ -369,6 +381,18 @@ const getCurrentUserUseCase = new GetCurrentUserUseCase(
   appLogger,
 );
 
+const getAllUsersUseCase = new GetAllUsersUseCase(
+  userRepository,
+  authorizationService,
+  appLogger,
+);
+
+const getUserByIdUseCase = new GetUserByIdUseCase(
+  userRepository,
+  authorizationService,
+  appLogger,
+);
+
 // -----------------------------------------------------
 // Container
 // -----------------------------------------------------
@@ -423,6 +447,8 @@ export const container = {
 
   // User
   getCurrentUserUseCase,
+  getAllUsersUseCase,
+  getUserByIdUseCase,
 
   //inbox
   inboxRepository,

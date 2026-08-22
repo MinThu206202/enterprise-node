@@ -1,6 +1,7 @@
 import type { IUserRepository } from "../../../domain/repositories/IUserRepository.js";
 import type { IRoleRepository } from "../../../domain/repositories/IRoleRepository.js";
 import type { IUserRoleRepository } from "../../../domain/repositories/IUserRoleRepository.js";
+import type { IAuthorizationCache } from "../../services/authorization/IAuthorizationCache.js";
 import { NotFoundError } from "../../../shared/errors/NotFoundError.js";
 import type { RemoveRoleFromUserInput } from "../../dto/userRoles/RemoveRoleFromUserInput.js";
 
@@ -9,6 +10,7 @@ export class RemoveRoleFromUserUseCase {
     private readonly userRepository: IUserRepository,
     private readonly roleRepository: IRoleRepository,
     private readonly userRoleRepository: IUserRoleRepository,
+    private readonly authorizationCache: IAuthorizationCache,
   ) {}
 
   async execute(input: RemoveRoleFromUserInput): Promise<void> {
@@ -37,6 +39,9 @@ export class RemoveRoleFromUserUseCase {
       input.userId,
       input.roleId,
     );
+
+    // Authorization data is now stale.
+    await this.authorizationCache.invalidate(input.userId);
   }
 }
 

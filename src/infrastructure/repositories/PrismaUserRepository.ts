@@ -10,6 +10,7 @@ export class PrismaUserRepository implements IUserRepository {
     const record = await this.prisma.user.findUnique({
       where: {
         id,
+        deletedAt: null,
       },
     });
 
@@ -24,6 +25,7 @@ export class PrismaUserRepository implements IUserRepository {
     const record = await this.prisma.user.findUnique({
       where: {
         email,
+        deletedAt: null,
       },
     });
 
@@ -32,6 +34,19 @@ export class PrismaUserRepository implements IUserRepository {
     }
 
     return this.toDomain(record);
+  }
+
+  async findAll(): Promise<User[]> {
+    const records = await this.prisma.user.findMany({
+      where: {
+        deletedAt: null,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return records.map((record) => this.toDomain(record));
   }
 
   async save(user: User): Promise<User> {
@@ -49,10 +64,14 @@ export class PrismaUserRepository implements IUserRepository {
     return this.toDomain(record);
   }
 
-  async delete(id: string): Promise<void> {
-    await this.prisma.user.delete({
+  async softDelete(id: string): Promise<void> {
+    await this.prisma.user.update({
       where: {
         id,
+        deletedAt: null,
+      },
+      data: {
+        deletedAt: new Date(),
       },
     });
   }
@@ -75,6 +94,7 @@ export class PrismaUserRepository implements IUserRepository {
     passwordHash: string | null;
     createdAt: Date;
     updatedAt: Date;
+    deletedAt: Date | null;
   }): User {
     if (!record.passwordHash) {
       throw new Error(`User ${record.id} does not have a password hash`);
@@ -87,6 +107,7 @@ export class PrismaUserRepository implements IUserRepository {
       passwordHash: record.passwordHash,
       createdAt: record.createdAt,
       updatedAt: record.updatedAt,
+      deletedAt: record.deletedAt,
     });
   }
 }

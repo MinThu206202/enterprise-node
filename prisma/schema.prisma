@@ -15,12 +15,14 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  deletedAt DateTime?
 
   userRoles UserRole[]
 
   refreshTokenSessions RefreshTokenSession[]
   trustedDevices       TrustedDevice[]
 
+  @@index([deletedAt])
   @@map("users")
 }
 
@@ -112,6 +114,9 @@ model Role {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+
+  @@index([deletedAt])
 }
 
 model UserRole {
