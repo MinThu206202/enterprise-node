@@ -9,6 +9,8 @@ export async function meRoutes(app: FastifyInstance): Promise<void> {
   const controller = new UserController(
     container.registerUserUseCase,
     container.getCurrentUserUseCase,
+    container.getAllUsersUseCase,
+    container.getUserByIdUseCase,
   );
 
   app.get(

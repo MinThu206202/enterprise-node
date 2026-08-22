@@ -5,9 +5,11 @@ export interface IUserRepository {
 
   findByEmail(email: string): Promise<User | null>;
 
+  findAll(): Promise<User[]>;
+
   save(user: User): Promise<User>;
 
   updatePassword(id: string, passwordHash: string): Promise<void>;
 
-  delete(id: string): Promise<void>;
+  softDelete(id: string): Promise<void>;
 }

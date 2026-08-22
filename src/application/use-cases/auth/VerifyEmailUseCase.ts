@@ -100,6 +100,7 @@ export class VerifyEmailUseCase {
         passwordHash: registration.passwordHash,
         createdAt: now,
         updatedAt: now,
+        deletedAt: null,
       });
 
       await this.unitOfWork.execute(async (tx) => {

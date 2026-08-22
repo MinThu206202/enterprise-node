@@ -59,6 +59,26 @@ const permissions = [
     name: "permissions:assign",
     description: "Assign permissions to roles",
   },
+  {
+    name: "transfer:create",
+    description: "Create transfers",
+  },
+  {
+    name: "transfer:update",
+    description: "Update transfers",
+  },
+  {
+    name: "user-roles:read",
+    description: "View user role assignments",
+  },
+  {
+    name: "user-roles:assign",
+    description: "Assign roles to users",
+  },
+  {
+    name: "user-roles:delete",
+    description: "Remove roles from users",
+  },
 ];
 
 const roles = [
@@ -81,6 +101,13 @@ const roles = [
       "roles:read",
       "roles:update",
       "roles:delete",
+
+      "transfer:create",
+      "transfer:update",
+
+      "user-roles:read",
+      "user-roles:assign",
+      "user-roles:delete",
 
       "permissions:read",
       "permissions:assign",

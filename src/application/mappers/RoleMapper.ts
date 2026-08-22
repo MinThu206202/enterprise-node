@@ -9,6 +9,7 @@ export class RoleMapper {
       description: data.description,
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
+      deletedAt: data.deletedAt,
     });
   }
 
@@ -19,6 +20,7 @@ export class RoleMapper {
       description: role.description,
       createdAt: role.createdAt,
       updatedAt: role.updatedAt,
+      deletedAt: role.deletedAt,
     };
   }
 }

@@ -5,6 +5,7 @@ export interface UserProps {
   passwordHash: string;
   createdAt: Date;
   updatedAt: Date;
+  deletedAt: Date | null;
 }
 
 export class User {
@@ -32,5 +33,13 @@ export class User {
 
   getUpdatedAt(): Date {
     return this.props.updatedAt;
+  }
+
+  getDeletedAt(): Date | null {
+    return this.props.deletedAt;
+  }
+
+  isDeleted(): boolean {
+    return this.props.deletedAt !== null;
   }
 }

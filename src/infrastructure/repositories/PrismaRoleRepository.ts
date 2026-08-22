@@ -11,7 +11,7 @@ export class PrismaRoleRepository implements IRoleRepository {
 
   async findById(id: string): Promise<Role | null> {
     const role = await this.prisma.role.findUnique({
-      where: { id },
+      where: { id, deletedAt: null },
     });
 
     return role ? RoleMapper.toDomain(role) : null;
@@ -19,7 +19,7 @@ export class PrismaRoleRepository implements IRoleRepository {
 
   async findByName(name: string): Promise<Role | null> {
     const role = await this.prisma.role.findUnique({
-      where: { name },
+      where: { name, deletedAt: null },
     });
 
     return role ? RoleMapper.toDomain(role) : null;
@@ -27,6 +27,7 @@ export class PrismaRoleRepository implements IRoleRepository {
 
   async findAll(): Promise<Role[]> {
     const roles = await this.prisma.role.findMany({
+      where: { deletedAt: null },
       orderBy: {
         createdAt: "desc",
       },
@@ -60,9 +61,12 @@ export class PrismaRoleRepository implements IRoleRepository {
     return RoleMapper.toDomain(updatedRole);
   }
 
-  async delete(id: string): Promise<void> {
-    await this.prisma.role.delete({
-      where: { id },
+  async softDelete(id: string): Promise<void> {
+    await this.prisma.role.update({
+      where: { id, deletedAt: null },
+      data: {
+        deletedAt: new Date(),
+      },
     });
   }
 }

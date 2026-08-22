@@ -4,6 +4,7 @@ export interface RoleProps {
   description: string | null;
   createdAt: Date;
   updatedAt: Date;
+  deletedAt: Date | null;
 }
 
 export class Role {
@@ -31,5 +32,13 @@ export class Role {
 
   get updatedAt(): Date {
     return this.props.updatedAt;
+  }
+
+  get deletedAt(): Date | null {
+    return this.props.deletedAt;
+  }
+
+  isDeleted(): boolean {
+    return this.props.deletedAt !== null;
   }
 }

@@ -8,34 +8,38 @@ export class PrismaAuthorizationRepository implements IAuthorizationRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
   async getUserAuthorization(userId: string): Promise<AuthorizationContext> {
-    const userRoles = await this.prisma.userRole.findMany({
+    // Note: filtering the to-one `role` relation inside `include` is not
+    // supported by the Prisma client, so we query from the Role side instead.
+    const roles = await this.prisma.role.findMany({
       where: {
-        userId,
+        deletedAt: null,
+
+        userRoles: {
+          some: {
+            userId,
+          },
+        },
       },
       include: {
-        role: {
+        rolePermissions: {
           include: {
-            rolePermissions: {
-              include: {
-                permission: true,
-              },
-            },
+            permission: true,
           },
         },
       },
     });
 
-    const roles = userRoles.map((userRole) => userRole.role.name);
+    const roleNames = roles.map((role) => role.name);
 
-    const permissions = userRoles.flatMap((userRole) =>
-      userRole.role.rolePermissions.map(
+    const permissions = roles.flatMap((role) =>
+      role.rolePermissions.map(
         (rolePermission) => rolePermission.permission.name,
       ),
     );
 
     return {
       userId,
-      roles: [...new Set(roles)],
+      roles: [...new Set(roleNames)],
       permissions: [...new Set(permissions)],
     };
   }

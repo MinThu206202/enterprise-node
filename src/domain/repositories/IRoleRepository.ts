@@ -9,5 +9,5 @@ export interface IRoleRepository {
   findByName(name: string): Promise<Role | null>;
   findAll(): Promise<Role[]>;
   update(id: string, data: UpdateRoleInput): Promise<Role>;
-  delete(id: string): Promise<void>;
+  softDelete(id: string): Promise<void>;
 }
