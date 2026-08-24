@@ -14,6 +14,7 @@ import { roleRoutes } from "./routes/v1/roleRoutes.js";
 import { rolePermissionRoutes } from "./routes/v1/rolePermissionRoutes.js";
 
 import { API_VERSION } from "../../../src/shared/http/ApiVersion.js";
+import { env } from "../../../src/infrastructure/config/env.js";
 import { registerRedis } from "./plugins/redis.js";
 import { registerSwagger, swaggerCsp } from "./plugins/swagger.js";
 import { userRoleRoutes } from "./routes/v1/userRoleRoutes.js";
@@ -22,6 +23,7 @@ import { permissionRoutes } from "./routes/v1/permissionRoutes.js";
 export function createApp(): FastifyInstance {
   const app = Fastify({
     logger: true,
+    trustProxy: env.TRUST_PROXY,
   });
 
   // Tolerate empty JSON bodies (e.g. POST/DELETE with no payload)

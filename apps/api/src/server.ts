@@ -1,5 +1,7 @@
 import { createApp } from "./app.js";
 
+import { env } from "../../../src/infrastructure/config/env.js";
+
 import {
   rabbitMQClient,
   welcomeEmailConsumer,
@@ -47,7 +49,7 @@ async function bootstrap() {
     // ---------------------------------------------
 
     await app.listen({
-      port: 3000,
+      port: env.PORT,
       host: "0.0.0.0",
     });
   } catch (error) {
