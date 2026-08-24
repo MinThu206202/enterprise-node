@@ -7,6 +7,11 @@ const envSchema = z.object({
 
   PORT: z.coerce.number().int().positive().default(3000),
 
+  TRUST_PROXY: z
+    .enum(["true", "false"])
+    .default("false")
+    .transform((value) => value === "true"),
+
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
 
   LOG_LEVEL: z
@@ -24,6 +29,18 @@ const envSchema = z.object({
   JWT_REFRESH_EXPIRES_IN: z.string().default("7d"),
 
   JWT_RESET_EXPIRES_IN: z.string().default("10m"),
+
+  CORS_ORIGINS: z
+    .string()
+    .default(
+      "http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173",
+    )
+    .transform((value) =>
+      value
+        .split(",")
+        .map((origin) => origin.trim())
+        .filter((origin) => origin.length > 0),
+    ),
 });
 
 const result = envSchema.safeParse(process.env);
