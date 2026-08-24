@@ -1,7 +1,7 @@
 import type { User } from "../../domain/entities/User.js";
 import type { AuthorizationContext } from "../context/AuthorizationContext.js";
 
-import type { UserResponseDto } from "../dto/users/UserResponseDto.js";
+import type { UserResponseDto } from "../modules/users/dto/UserResponseDto.js";
 
 export class UserMapper {
   static toResponse(

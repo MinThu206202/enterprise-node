@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx watch apps/api/src/server.ts",
+    "dev": "tsx watch apps/api/server.ts",
     "build": "tsc",
-    "start": "node dist/apps/api/src/server.js",
+    "start": "node dist/apps/api/server.js",
     "typecheck": "tsc --noEmit",
     "bootstrap:admin": "tsx prisma/bootstrap-admin.ts",
     "backfill:read-model": "tsx scripts/backfill-user-read-model.ts"

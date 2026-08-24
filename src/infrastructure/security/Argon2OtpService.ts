@@ -1,7 +1,7 @@
 import { randomInt } from "node:crypto";
 import argon2 from "argon2";
 
-import type { IOtpService } from "../../application/services/registration/IOtpService.js";
+import type { IOtpService } from "../../application/ports/registration/IOtpService.js";
 
 export class Argon2OtpService implements IOtpService {
   generate(): string {

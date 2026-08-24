@@ -3,7 +3,7 @@ import type { ILogger } from "../../../shared/logging/ILogger.js";
 
 import { EVENT_TYPES } from "../../../application/events/EventTypes.js";
 
-import { MongoUserProjector } from "../../read-models/mongodb/MongoUserProjector.js";
+import { MongoUserProjector } from "../../persistence/mongodb/read-models/MongoUserProjector.js";
 
 import { rabbitmqClient } from "./rabbitmqClient.js";
 import {
