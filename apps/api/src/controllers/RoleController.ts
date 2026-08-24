@@ -5,21 +5,20 @@ import {
 } from "../../../../src/application/validation/roles/createRoleSchema.js";
 import { updateRoleSchema } from "../../../../src/application/validation/roles/updateRoleSchema.js";
 
-import type { CreateRoleUseCase } from "../../../../src/application/use-cases/roles/CreateRoleUseCase.js";
-import type { GetRoleUseCase } from "../../../../src/application/use-cases/roles/GetRoleUseCase.js";
-import type { GetAllRolesUseCase } from "../../../../src/application/use-cases/roles/GetAllRolesUseCase.js";
-import type { UpdateRoleUseCase } from "../../../../src/application/use-cases/roles/UpdateRoleUseCase.js";
-import type { DeleteRoleUseCase } from "../../../../src/application/use-cases/roles/DeleteRoleUseCase.js";
+import type { CommandBus } from "../../../../src/application/bus/CommandBus.js";
+import type { QueryBus } from "../../../../src/application/bus/QueryBus.js";
+import { CreateRoleCommand } from "../../../../src/application/commands/roles/CreateRoleCommand.js";
+import { UpdateRoleCommand } from "../../../../src/application/commands/roles/UpdateRoleCommand.js";
+import { DeleteRoleCommand } from "../../../../src/application/commands/roles/DeleteRoleCommand.js";
+import { GetRoleQuery } from "../../../../src/application/queries/roles/GetRoleQuery.js";
+import { GetAllRolesQuery } from "../../../../src/application/queries/roles/GetAllRolesQuery.js";
 
 import { ValidationError } from "../../../../src/shared/errors/ValidationError.js";
 
 export class RoleController {
   constructor(
-    private readonly createRoleUseCase: CreateRoleUseCase,
-    private readonly getRoleUseCase: GetRoleUseCase,
-    private readonly getAllRolesUseCase: GetAllRolesUseCase,
-    private readonly updateRoleUseCase: UpdateRoleUseCase,
-    private readonly deleteRoleUseCase: DeleteRoleUseCase,
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
   ) {}
 
   async create(request: FastifyRequest, reply: FastifyReply) {
@@ -31,7 +30,9 @@ export class RoleController {
       );
     }
 
-    const role = await this.createRoleUseCase.execute(result.data);
+    const role = await this.commandBus.execute(
+      new CreateRoleCommand(result.data),
+    );
 
     return reply.status(201).send(role);
   }
@@ -44,13 +45,15 @@ export class RoleController {
     }>,
     reply: FastifyReply,
   ) {
-    const role = await this.getRoleUseCase.execute(request.params.id);
+    const role = await this.queryBus.execute(
+      new GetRoleQuery(request.params.id),
+    );
 
     return reply.status(200).send(role);
   }
 
   async getAll(_request: FastifyRequest, reply: FastifyReply) {
-    const roles = await this.getAllRolesUseCase.execute();
+    const roles = await this.queryBus.execute(new GetAllRolesQuery());
 
     return reply.status(200).send(roles);
   }
@@ -71,9 +74,8 @@ export class RoleController {
       );
     }
 
-    const role = await this.updateRoleUseCase.execute(
-      request.params.id,
-      result.data,
+    const role = await this.commandBus.execute(
+      new UpdateRoleCommand(request.params.id, result.data),
     );
 
     return reply.status(200).send(role);
@@ -87,7 +89,7 @@ export class RoleController {
     }>,
     reply: FastifyReply,
   ) {
-    await this.deleteRoleUseCase.execute(request.params.id);
+    await this.commandBus.execute(new DeleteRoleCommand(request.params.id));
 
     return reply.status(200).send({ message: "Role deleted successfully" });
   }

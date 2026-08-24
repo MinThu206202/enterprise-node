@@ -1,16 +1,16 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 
-import { AssignPermissionToRoleUseCase } from "../../../../src/application/use-cases/rolePermissions/AssignPermissionToRoleUseCase.js";
-import { RemovePermissionFromRoleUseCase } from "../../../../src/application/use-cases/rolePermissions/RemovePermissionFromRoleUseCase.js";
-import { GetRolePermissionsUseCase } from "../../../../src/application/use-cases/rolePermissions/GetRolePermissionsUseCase.js";
-import { GetRoleUseCase } from "../../../../src/application/use-cases/roles/GetRoleUseCase.js";
+import { AssignPermissionToRoleCommand } from "../../../../src/application/commands/rolePermissions/AssignPermissionToRoleCommand.js";
+import { RemovePermissionFromRoleCommand } from "../../../../src/application/commands/rolePermissions/RemovePermissionFromRoleCommand.js";
+import { GetRolePermissionsQuery } from "../../../../src/application/queries/rolePermissions/GetRolePermissionsQuery.js";
+import type { CommandBus } from "../../../../src/application/bus/CommandBus.js";
+import type { QueryBus } from "../../../../src/application/bus/QueryBus.js";
+import { GetRoleQuery } from "../../../../src/application/queries/roles/GetRoleQuery.js";
 
 export class RolePermissionController {
   constructor(
-    private readonly assignPermissionToRoleUseCase: AssignPermissionToRoleUseCase,
-    private readonly removePermissionFromRoleUseCase: RemovePermissionFromRoleUseCase,
-    private readonly getRolePermissionsUseCase: GetRolePermissionsUseCase,
-    private readonly getRoleUseCase: GetRoleUseCase,
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
   ) {}
 
   async assign(
@@ -22,14 +22,14 @@ export class RolePermissionController {
     }>,
     reply: FastifyReply,
   ): Promise<void> {
-    await this.assignPermissionToRoleUseCase.create({
+    await this.commandBus.execute(new AssignPermissionToRoleCommand({
       roleId: request.params.roleId,
       permissionId: request.params.permissionId,
-    });
+    }));
 
     const [role, permissions] = await Promise.all([
-      this.getRoleUseCase.execute(request.params.roleId),
-      this.getRolePermissionsUseCase.execute(request.params.roleId),
+      this.queryBus.execute(new GetRoleQuery(request.params.roleId)),
+      this.queryBus.execute(new GetRolePermissionsQuery(request.params.roleId)),
     ]);
 
     reply.code(200).send({
@@ -48,14 +48,14 @@ export class RolePermissionController {
     }>,
     reply: FastifyReply,
   ): Promise<void> {
-    await this.removePermissionFromRoleUseCase.execute({
+    await this.commandBus.execute(new RemovePermissionFromRoleCommand({
       roleId: request.params.roleId,
       permissionId: request.params.permissionId,
-    });
+    }));
 
     const [role, permissions] = await Promise.all([
-      this.getRoleUseCase.execute(request.params.roleId),
-      this.getRolePermissionsUseCase.execute(request.params.roleId),
+      this.queryBus.execute(new GetRoleQuery(request.params.roleId)),
+      this.queryBus.execute(new GetRolePermissionsQuery(request.params.roleId)),
     ]);
 
     reply.code(200).send({
@@ -74,8 +74,8 @@ export class RolePermissionController {
     reply: FastifyReply,
   ): Promise<void> {
     const [role, permissions] = await Promise.all([
-      this.getRoleUseCase.execute(request.params.roleId),
-      this.getRolePermissionsUseCase.execute(request.params.roleId),
+      this.queryBus.execute(new GetRoleQuery(request.params.roleId)),
+      this.queryBus.execute(new GetRolePermissionsQuery(request.params.roleId)),
     ]);
 
     reply.code(200).send({ role, permissions });

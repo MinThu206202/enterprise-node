@@ -18,6 +18,7 @@ model User {
   deletedAt DateTime?
 
   userRoles UserRole[]
+  version Int @default(1)
 
   refreshTokenSessions RefreshTokenSession[]
   trustedDevices       TrustedDevice[]
@@ -111,6 +112,8 @@ model Role {
 
   userRoles       UserRole[]
   rolePermissions RolePermission[]
+
+  version Int @default(1)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

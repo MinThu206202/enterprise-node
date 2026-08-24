@@ -36,25 +36,13 @@ export class PrismaUserRepository implements IUserRepository {
     return this.toDomain(record);
   }
 
-  async findAll(): Promise<User[]> {
-    const records = await this.prisma.user.findMany({
-      where: {
-        deletedAt: null,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-
-    return records.map((record) => this.toDomain(record));
-  }
-
   async save(user: User): Promise<User> {
     const record = await this.prisma.user.create({
       data: {
         id: user.getId(),
         email: user.getEmail(),
         name: user.getName(),
+        version: user.version,
         passwordHash: user.getPasswordHash(),
         createdAt: user.getCreatedAt(),
         updatedAt: user.getUpdatedAt(),
@@ -91,6 +79,7 @@ export class PrismaUserRepository implements IUserRepository {
     id: string;
     email: string;
     name: string;
+    version: number;
     passwordHash: string | null;
     createdAt: Date;
     updatedAt: Date;
@@ -105,6 +94,7 @@ export class PrismaUserRepository implements IUserRepository {
       email: record.email,
       name: record.name,
       passwordHash: record.passwordHash,
+      version: record.version,
       createdAt: record.createdAt,
       updatedAt: record.updatedAt,
       deletedAt: record.deletedAt,

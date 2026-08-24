@@ -6,7 +6,8 @@ import { authenticate } from "../../hooks/authenticate.js";
 import { permissionGuard } from "../../hooks/permissionGuard.js";
 
 export async function permissionRoutes(app: FastifyInstance): Promise<void> {
-  const controller = new PermissionController(container.permissionRepository);
+  const controller = new PermissionController(
+    container.queryBus,);
 
   app.get(
     "/permissions",

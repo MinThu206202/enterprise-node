@@ -1,15 +1,24 @@
 import type { PrismaClient } from "../../generated/prisma/client.js";
 import type { PrismaTransaction } from "../database/PrismaTransaction.js";
-import type { IOutboxRepository, CreateOutboxMessageInput } from "../../domain/repositories/IOutboxRepository.js";
+import type {
+  IOutboxRepository,
+  CreateOutboxMessageInput,
+} from "../../domain/repositories/IOutboxRepository.js";
 
 export class PrismaOutboxRepository implements IOutboxRepository {
   constructor(private readonly prisma: PrismaClient | PrismaTransaction) {}
 
-  async create(input: CreateOutboxMessageInput): Promise<void> {
-    await this.prisma.outboxMessage.create({
+  async create(
+    input: CreateOutboxMessageInput,
+    tx?: PrismaTransaction,
+  ): Promise<void> {
+    const client = tx ?? this.prisma;
+
+    await client.outboxMessage.create({
       data: {
         type: input.type,
         payload: input.payload as never,
+        availableAt: input.availableAt,
       },
     });
   }
@@ -42,9 +51,7 @@ export class PrismaOutboxRepository implements IOutboxRepository {
 
   async markProcessing(id: string): Promise<void> {
     await this.prisma.outboxMessage.update({
-      where: {
-        id,
-      },
+      where: { id },
       data: {
         status: "PROCESSING",
       },
@@ -53,9 +60,7 @@ export class PrismaOutboxRepository implements IOutboxRepository {
 
   async markPublished(id: string): Promise<void> {
     await this.prisma.outboxMessage.update({
-      where: {
-        id,
-      },
+      where: { id },
       data: {
         status: "PUBLISHED",
         processedAt: new Date(),
@@ -65,9 +70,7 @@ export class PrismaOutboxRepository implements IOutboxRepository {
 
   async markFailed(id: string, nextAvailableAt: Date): Promise<void> {
     await this.prisma.outboxMessage.update({
-      where: {
-        id,
-      },
+      where: { id },
       data: {
         status: "PENDING",
         availableAt: nextAvailableAt,
@@ -80,9 +83,7 @@ export class PrismaOutboxRepository implements IOutboxRepository {
 
   async markPermanentlyFailed(id: string): Promise<void> {
     await this.prisma.outboxMessage.update({
-      where: {
-        id,
-      },
+      where: { id },
       data: {
         status: "FAILED",
         attempts: {

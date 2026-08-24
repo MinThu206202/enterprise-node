@@ -7,10 +7,8 @@ import { authenticate } from "../../hooks/authenticate.js";
 
 export async function meRoutes(app: FastifyInstance): Promise<void> {
   const controller = new UserController(
-    container.registerUserUseCase,
-    container.getCurrentUserUseCase,
-    container.getAllUsersUseCase,
-    container.getUserByIdUseCase,
+    container.commandBus,
+    container.queryBus,
   );
 
   app.get(

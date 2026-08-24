@@ -19,6 +19,7 @@ import { registerRedis } from "./plugins/redis.js";
 import { registerSwagger, swaggerCsp } from "./plugins/swagger.js";
 import { userRoleRoutes } from "./routes/v1/userRoleRoutes.js";
 import { permissionRoutes } from "./routes/v1/permissionRoutes.js";
+import mongoPlugin from "./plugins/mongo.js";
 
 export function createApp(): FastifyInstance {
   const app = Fastify({
@@ -79,6 +80,8 @@ export function createApp(): FastifyInstance {
 
   //redis connection
   app.register(registerRedis);
+
+  app.register(mongoPlugin);
 
   app.get("/health", async () => {
     return {

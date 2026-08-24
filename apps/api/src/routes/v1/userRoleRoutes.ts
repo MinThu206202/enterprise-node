@@ -8,11 +8,8 @@ import { permissionGuard } from "../../hooks/permissionGuard.js";
 
 export async function userRoleRoutes(fastify: FastifyInstance): Promise<void> {
   const controller = new UserRoleController(
-    container.assignRoleToUserUseCase,
-    container.removeRoleFromUserUseCase,
-    container.userRoleRepository,
-    container.roleRepository,
-  );
+    container.commandBus,
+    container.queryBus,);
 
   fastify.get<{ Params: { userId: string } }>(
     "/users/:userId/roles",
@@ -27,21 +24,7 @@ export async function userRoleRoutes(fastify: FastifyInstance): Promise<void> {
       },
     },
     async (request, reply) => {
-      const roleIds = await container.userRoleRepository.findRolesByUserId(
-        request.params.userId,
-      );
-
-      const roles = await Promise.all(
-        roleIds.map((id) => container.roleRepository.findById(id)),
-      );
-
-      return reply.status(200).send(
-        roles.filter(Boolean).map((role) => ({
-          id: role!.id,
-          name: role!.name,
-          description: role!.description,
-        })),
-      );
+      return controller.getByUser(request, reply);
     },
   );
 
