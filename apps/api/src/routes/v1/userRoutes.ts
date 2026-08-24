@@ -8,10 +8,8 @@ import type { CreateUserInput } from "../../../../../src/application/dto/users/C
 
 export async function userRoutes(app: FastifyInstance): Promise<void> {
   const controller = new UserController(
-    container.registerUserUseCase,
-    container.getCurrentUserUseCase,
-    container.getAllUsersUseCase,
-    container.getUserByIdUseCase,
+    container.commandBus,
+    container.queryBus,
   );
 
   app.post<{ Body: CreateUserInput }>(

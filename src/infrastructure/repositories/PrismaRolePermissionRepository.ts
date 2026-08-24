@@ -1,10 +1,15 @@
 import { Permission } from "../../domain/entities/Permission.js";
 import type { IRolePermissionRepository } from "../../domain/repositories/IRolePermissionRepository.js";
-import { prisma } from "../database/prisma/PrismaClient.js";
+import type { PrismaClient } from "../../generated/prisma/client.js";
+import { PrismaTransaction } from "../database/PrismaTransaction.js";
 
 export class PrismaRolePermissionRepository implements IRolePermissionRepository {
+  constructor(
+    private readonly prisma: PrismaClient | PrismaTransaction,
+  ) {}
+
   async assign(roleId: string, permissionId: string): Promise<void> {
-    await prisma.rolePermission.create({
+    await this.prisma.rolePermission.create({
       data: {
         roleId,
         permissionId,
@@ -13,7 +18,7 @@ export class PrismaRolePermissionRepository implements IRolePermissionRepository
   }
 
   async remove(roleId: string, permissionId: string): Promise<void> {
-    await prisma.rolePermission.delete({
+    await this.prisma.rolePermission.delete({
       where: {
         roleId_permissionId: {
           roleId,
@@ -24,7 +29,7 @@ export class PrismaRolePermissionRepository implements IRolePermissionRepository
   }
 
   async exists(roleId: string, permissionId: string): Promise<boolean> {
-    const rolePermission = await prisma.rolePermission.findUnique({
+    const rolePermission = await this.prisma.rolePermission.findUnique({
       where: {
         roleId_permissionId: {
           roleId,
@@ -37,7 +42,7 @@ export class PrismaRolePermissionRepository implements IRolePermissionRepository
   }
 
   async findPermissionsByRoleId(roleId: string): Promise<Permission[]> {
-    const rolePermissions = await prisma.rolePermission.findMany({
+    const rolePermissions = await this.prisma.rolePermission.findMany({
       where: {
         roleId,
       },

@@ -15,18 +15,7 @@ import { ResetPasswordInput } from "../../../../../src/application/validation/au
 
 export async function authRoutes(app: FastifyInstance): Promise<void> {
   const controller = new AuthController(
-    container.registerUserUseCase,
-    container.loginUserUseCase,
-    container.refreshTokenUseCase,
-    container.logoutUseCase,
-    container.verifyEmailUseCase,
-    container.resendVerificationUseCase,
-    container.requestForgotPasswordUseCase,
-    container.resendForgotPasswordUseCase,
-    container.verifyForgotPasswordUseCase,
-    container.resetPasswordUseCase,
-    container.verifyLoginOtpUseCase,
-  );
+    container.commandBus,);
 
   // Register
   app.post<{ Body: RegisterInput }>(

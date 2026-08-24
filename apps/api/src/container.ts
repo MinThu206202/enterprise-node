@@ -1,3 +1,45 @@
+import { RegisterUserCommand } from "../../../src/application/commands/auth/RegisterUserCommand.js";
+import { RegisterUserCommandHandler } from "../../../src/application/commands/auth/RegisterUserCommandHandler.js";
+import { LoginUserCommand } from "../../../src/application/commands/auth/LoginUserCommand.js";
+import { LoginUserCommandHandler } from "../../../src/application/commands/auth/LoginUserCommandHandler.js";
+import { RefreshTokenCommand } from "../../../src/application/commands/auth/RefreshTokenCommand.js";
+import { RefreshTokenCommandHandler } from "../../../src/application/commands/auth/RefreshTokenCommandHandler.js";
+import { LogoutCommand } from "../../../src/application/commands/auth/LogoutCommand.js";
+import { LogoutCommandHandler } from "../../../src/application/commands/auth/LogoutCommandHandler.js";
+import { VerifyEmailCommand } from "../../../src/application/commands/auth/VerifyEmailCommand.js";
+import { VerifyEmailCommandHandler } from "../../../src/application/commands/auth/VerifyEmailCommandHandler.js";
+import { ResendVerificationCommand } from "../../../src/application/commands/auth/ResendVerificationCommand.js";
+import { ResendVerificationCommandHandler } from "../../../src/application/commands/auth/ResendVerificationCommandHandler.js";
+import { RequestForgotPasswordCommand } from "../../../src/application/commands/auth/RequestForgotPasswordCommand.js";
+import { RequestForgotPasswordCommandHandler } from "../../../src/application/commands/auth/RequestForgotPasswordCommandHandler.js";
+import { ResendForgotPasswordCommand } from "../../../src/application/commands/auth/ResendForgotPasswordCommand.js";
+import { ResendForgotPasswordCommandHandler } from "../../../src/application/commands/auth/ResendForgotPasswordCommandHandler.js";
+import { VerifyForgotPasswordCommand } from "../../../src/application/commands/auth/VerifyForgotPasswordCommand.js";
+import { VerifyForgotPasswordCommandHandler } from "../../../src/application/commands/auth/VerifyForgotPasswordCommandHandler.js";
+import { ResetPasswordCommand } from "../../../src/application/commands/auth/ResetPasswordCommand.js";
+import { ResetPasswordCommandHandler } from "../../../src/application/commands/auth/ResetPasswordCommandHandler.js";
+import { VerifyLoginOtpCommand } from "../../../src/application/commands/auth/VerifyLoginOtpCommand.js";
+import { VerifyLoginOtpCommandHandler } from "../../../src/application/commands/auth/VerifyLoginOtpCommandHandler.js";
+import { GetCurrentUserQuery } from "../../../src/application/queries/users/GetCurrentUserQuery.js";
+import { GetCurrentUserQueryHandler } from "../../../src/application/queries/users/GetCurrentUserQueryHandler.js";
+import { GetAllUsersQuery } from "../../../src/application/queries/users/GetAllUsersQuery.js";
+import { GetAllUsersQueryHandler } from "../../../src/application/queries/users/GetAllUsersQueryHandler.js";
+import { GetUserByIdQuery } from "../../../src/application/queries/users/GetUserByIdQuery.js";
+import { GetUserByIdQueryHandler } from "../../../src/application/queries/users/GetUserByIdQueryHandler.js";
+import { AssignRoleToUserCommand } from "../../../src/application/commands/userRoles/AssignRoleToUserCommand.js";
+import { AssignRoleToUserCommandHandler } from "../../../src/application/commands/userRoles/AssignRoleToUserCommandHandler.js";
+import { RemoveRoleFromUserCommand } from "../../../src/application/commands/userRoles/RemoveRoleFromUserCommand.js";
+import { RemoveRoleFromUserCommandHandler } from "../../../src/application/commands/userRoles/RemoveRoleFromUserCommandHandler.js";
+import { GetUserRolesQuery } from "../../../src/application/queries/userRoles/GetUserRolesQuery.js";
+import { GetUserRolesQueryHandler } from "../../../src/application/queries/userRoles/GetUserRolesQueryHandler.js";
+import { AssignPermissionToRoleCommand } from "../../../src/application/commands/rolePermissions/AssignPermissionToRoleCommand.js";
+import { AssignPermissionToRoleCommandHandler } from "../../../src/application/commands/rolePermissions/AssignPermissionToRoleCommandHandler.js";
+import { RemovePermissionFromRoleCommand } from "../../../src/application/commands/rolePermissions/RemovePermissionFromRoleCommand.js";
+import { RemovePermissionFromRoleCommandHandler } from "../../../src/application/commands/rolePermissions/RemovePermissionFromRoleCommandHandler.js";
+import { GetRolePermissionsQuery } from "../../../src/application/queries/rolePermissions/GetRolePermissionsQuery.js";
+import { GetRolePermissionsQueryHandler } from "../../../src/application/queries/rolePermissions/GetRolePermissionsQueryHandler.js";
+import { GetAllPermissionsQuery } from "../../../src/application/queries/rolePermissions/GetAllPermissionsQuery.js";
+import { GetAllPermissionsQueryHandler } from "../../../src/application/queries/rolePermissions/GetAllPermissionsQueryHandler.js";
 import pino from "pino";
 
 // Logging
@@ -29,29 +71,17 @@ import { redisClient } from "../../../src/infrastructure/redis/redisClient.js";
 import { EmailService } from "../../../src/infrastructure/email/EmailService.js";
 
 // Auth use cases
-import { RegisterUserUseCase } from "../../../src/application/use-cases/auth/RegisterUserUseCase.js";
-import { LoginUserUseCase } from "../../../src/application/use-cases/auth/LoginUserUseCase.js";
-import { LogoutUseCase } from "../../../src/application/use-cases/auth/LogoutUseCase.js";
-import { RefreshTokenUseCase } from "../../../src/application/use-cases/auth/RefreshTokenUseCase.js";
-import { VerifyEmailUseCase } from "../../../src/application/use-cases/auth/VerifyEmailUseCase.js";
-import { ResendVerificationUseCase } from "../../../src/application/use-cases/auth/ResendVerificationUseCase.js";
-import { RequestForgotPasswordUseCase } from "../../../src/application/use-cases/auth/RequestForgotPasswordUseCase.js";
-import { ResendForgotPasswordUseCase } from "../../../src/application/use-cases/auth/ResendForgotPasswordUseCase.js";
-import { VerifyForgotPasswordUseCase } from "../../../src/application/use-cases/auth/VerifyForgotPasswordUseCase.js";
-import { ResetPasswordUseCase } from "../../../src/application/use-cases/auth/ResetPasswordUseCase.js";
 import { CheckLoginDeviceUseCase } from "../../../src/application/use-cases/auth/CheckLoginDeviceUseCase.js";
 import { CreateLoginVerificationUseCase } from "../../../src/application/use-cases/auth/CreateLoginVerificationUseCase.js";
-import { VerifyLoginOtpUseCase } from "../../../src/application/use-cases/auth/VerifyLoginOtpUseCase.js";
 
 // User use cases
-import { GetCurrentUserUseCase } from "../../../src/application/use-cases/users/GetCurrentUserUseCase.js";
-import { GetAllUsersUseCase } from "../../../src/application/use-cases/users/GetAllUsersUseCase.js";
-import { GetUserByIdUseCase } from "../../../src/application/use-cases/users/GetUserByIdUseCase.js";
 
 // Messaging
 import { rabbitmqClient } from "../../../src/infrastructure/messaging/rabbitmq/rabbitmqClient.js";
 import { RabbitMQPublisher } from "../../../src/infrastructure/messaging/rabbitmq/RabbitMQPublisher.js";
 import { WelcomeEmailConsumer } from "../../../src/infrastructure/messaging/rabbitmq/WelcomeEmailConsumer.js";
+import { UserReadModelConsumer } from "../../../src/infrastructure/messaging/rabbitmq/UserReadModelConsumer.js";
+import { MongoUserProjector } from "../../../src/infrastructure/read-models/mongodb/MongoUserProjector.js";
 
 // Outbox
 import { OutboxWorker } from "../../../src/application/services/outbox/OutboxWorker.js";
@@ -61,11 +91,18 @@ import { PrismaInboxRepository } from "../../../src/infrastructure/inbox/PrismaI
 import { EmailJobQueue } from "../../../src/infrastructure/messaging/rabbitmq/EmailJobQueue.js";
 import { EmailWorker } from "../../../src/infrastructure/messaging/rabbitmq/EmailWorker.js";
 import { PrismaRoleRepository } from "../../../src/infrastructure/repositories/PrismaRoleRepository.js";
-import { CreateRoleUseCase } from "../../../src/application/use-cases/roles/CreateRoleUseCase.js";
-import { GetRoleUseCase } from "../../../src/application/use-cases/roles/GetRoleUseCase.js";
-import { UpdateRoleUseCase } from "../../../src/application/use-cases/roles/UpdateRoleUseCase.js";
-import { DeleteRoleUseCase } from "../../../src/application/use-cases/roles/DeleteRoleUseCase.js";
-import { GetAllRolesUseCase } from "../../../src/application/use-cases/roles/GetAllRolesUseCase.js";
+import { CommandBus } from "../../../src/application/bus/CommandBus.js";
+import { QueryBus } from "../../../src/application/bus/QueryBus.js";
+import { CreateRoleCommand } from "../../../src/application/commands/roles/CreateRoleCommand.js";
+import { CreateRoleCommandHandler } from "../../../src/application/commands/roles/CreateRoleCommandHandler.js";
+import { UpdateRoleCommand } from "../../../src/application/commands/roles/UpdateRoleCommand.js";
+import { UpdateRoleCommandHandler } from "../../../src/application/commands/roles/UpdateRoleCommandHandler.js";
+import { DeleteRoleCommand } from "../../../src/application/commands/roles/DeleteRoleCommand.js";
+import { DeleteRoleCommandHandler } from "../../../src/application/commands/roles/DeleteRoleCommandHandler.js";
+import { GetRoleQuery } from "../../../src/application/queries/roles/GetRoleQuery.js";
+import { GetRoleQueryHandler } from "../../../src/application/queries/roles/GetRoleQueryHandler.js";
+import { GetAllRolesQuery } from "../../../src/application/queries/roles/GetAllRolesQuery.js";
+import { GetAllRolesQueryHandler } from "../../../src/application/queries/roles/GetAllRolesQueryHandler.js";
 import { PrismaAuthorizationRepository } from "../../../src/infrastructure/repositories/PrismaAuthorizationRepository.js";
 import { AuthorizationService } from "../../../src/application/services/authorization/AuthorizationService.js";
 import { permissionRegistry } from "../../../src/application/services/authorization/PermissionRegistry.js";
@@ -73,14 +110,12 @@ import { PermissionDefinitions } from "../../../src/application/services/authori
 import { PrismaPermissionRepository } from "../../../src/infrastructure/repositories/PrismaPermissionRepository.js";
 import { PermissionSynchronizer } from "../../../src/application/services/authorization/PermissionSynchronizer.js";
 import { PrismaRolePermissionRepository } from "../../../src/infrastructure/repositories/PrismaRolePermissionRepository.js";
-import { AssignPermissionToRoleUseCase } from "../../../src/application/use-cases/rolePermissions/AssignPermissionToRoleUseCase.js";
-import { RemovePermissionFromRoleUseCase } from "../../../src/application/use-cases/rolePermissions/RemovePermissionFromRoleUseCase.js";
-import { GetRolePermissionsUseCase } from "../../../src/application/use-cases/rolePermissions/GetRolePermissionsUseCase.js";
-import { AssignRoleToUserUseCase } from "../../../src/application/use-cases/userRoles/AssignRoleToUserUseCase.js";
-import { RemoveRoleFromUserUseCase } from "../../../src/application/use-cases/userRoles/RemoveRoleFromUserUseCase.js";
 import { PrismaUserRoleRepository } from "../../../src/infrastructure/repositories/PrismaUserRoleRepository.js";
 import { RedisAuthorizationCache } from "../../../src/infrastructure/redis/RedisAuthorizationCache.js";
-
+import { MongoDatabase } from "../../../src/infrastructure/database/mongodb/MongoDatabase.js";
+import { getMongoClient } from "../../../src/infrastructure/database/mongodb/MongoConnection.js";
+import { MongoUserReader } from "../../../src/infrastructure/read-models/mongodb/MongoUserReader.js";
+import { MongoReadModelSynchronizer } from "../../../src/infrastructure/read-models/mongodb/MongoReadModelSynchronizer.js";
 // -----------------------------------------------------
 // Register permission modules
 // -----------------------------------------------------
@@ -89,6 +124,16 @@ for (const definition of PermissionDefinitions) {
   permissionRegistry.register(definition);
 }
 
+export const mongoClient = getMongoClient();
+
+const mongoDatabase = new MongoDatabase(mongoClient);
+
+const userReader = new MongoUserReader(mongoDatabase);
+
+export const readModelSynchronizer = new MongoReadModelSynchronizer(
+  prisma,
+  mongoDatabase,
+);
 // -----------------------------------------------------
 // Configuration
 // -----------------------------------------------------
@@ -177,6 +222,19 @@ export const welcomeEmailConsumer = new WelcomeEmailConsumer(
 );
 
 // -----------------------------------------------------
+// User Read Model Projection
+// -----------------------------------------------------
+
+const mongoUserProjector = new MongoUserProjector(mongoDatabase);
+
+export const userReadModelConsumer = new UserReadModelConsumer(
+  rabbitMQClient,
+  mongoUserProjector,
+  inboxRepository,
+  appLogger,
+);
+
+// -----------------------------------------------------
 // Role
 // -----------------------------------------------------
 const roleRepository = new PrismaRoleRepository(prisma);
@@ -191,63 +249,62 @@ export const permissionSynchronizer = new PermissionSynchronizer(
   permissionRepository,
 );
 
-const rolePermissionRepository = new PrismaRolePermissionRepository();
+const rolePermissionRepository = new PrismaRolePermissionRepository(prisma);
 
-const getRolePermissionsUseCase = new GetRolePermissionsUseCase(
-  rolePermissionRepository,
+
+
+const authorizationService = new AuthorizationService(
+  authorizationRepository,
+  authorizationCache,
 );
 
-const authorizationService = new AuthorizationService(authorizationRepository,authorizationCache);
+const commandBus = new CommandBus();
 
-const createRoleUseCase = new CreateRoleUseCase(roleRepository);
-
-const getRoleUseCase = new GetRoleUseCase(roleRepository);
-
-const getAllRolesUseCase = new GetAllRolesUseCase(roleRepository);
+const queryBus = new QueryBus();
 
 const userRoleRepository = new PrismaUserRoleRepository(prisma);
 
-const updateRoleUseCase = new UpdateRoleUseCase(
-  roleRepository,
-  userRoleRepository,
-  authorizationCache,
+commandBus.register(
+  CreateRoleCommand.COMMAND_TYPE,
+  new CreateRoleCommandHandler(roleRepository),
 );
 
-const deleteRoleUseCase = new DeleteRoleUseCase(
-  roleRepository,
-  userRoleRepository,
-  authorizationCache,
+commandBus.register(
+  UpdateRoleCommand.COMMAND_TYPE,
+  new UpdateRoleCommandHandler(
+    roleRepository,
+    userRoleRepository,
+    authorizationCache,
+  ),
 );
+
+commandBus.register(
+  DeleteRoleCommand.COMMAND_TYPE,
+  new DeleteRoleCommandHandler(
+    roleRepository,
+    userRoleRepository,
+    authorizationCache,
+  ),
+);
+
+queryBus.register(
+  GetRoleQuery.QUERY_TYPE,
+  new GetRoleQueryHandler(roleRepository),
+);
+
+queryBus.register(
+  GetAllRolesQuery.QUERY_TYPE,
+  new GetAllRolesQueryHandler(roleRepository),
+);
+
 
 // -----------------------------------------------------
 // Assing ROle
 // -----------------------------------------------------
 
-const assignRoleToUserUseCase = new AssignRoleToUserUseCase(
-  userRepository,
-  roleRepository,
-  userRoleRepository,
-  authorizationCache,
-);
 
-const removeRoleFromUserUseCase = new RemoveRoleFromUserUseCase(
-  userRepository,
-  roleRepository,
-  userRoleRepository,
-  authorizationCache,
-);
 
-const assignPermissionToRoleUseCase = new AssignPermissionToRoleUseCase(
-  rolePermissionRepository,
-  userRoleRepository,
-  authorizationCache,
-);
 
-const removePermissionFromRoleUseCase = new RemovePermissionFromRoleUseCase(
-  rolePermissionRepository,
-  userRoleRepository,
-  authorizationCache,
-);
 // -----------------------------------------------------
 // Outbox Worker
 // -----------------------------------------------------
@@ -274,60 +331,12 @@ export const emailWorker = new EmailWorker(
 // Auth Use Cases
 // -----------------------------------------------------
 
-const verifyEmailUseCase = new VerifyEmailUseCase(
-  userRepository,
-  registrationStore,
-  otpService,
-  appLogger,
-  unitOfWork,
-  trustedDeviceRepository,
-);
 
-const resendVerificationUseCase = new ResendVerificationUseCase(
-  registrationStore,
-  otpService,
-  emailService,
-  appLogger,
-);
 
-const requestForgotPasswordUseCase = new RequestForgotPasswordUseCase(
-  userRepository,
-  passwordResetStore,
-  otpService,
-  appLogger,
-  emailJobQueue,
-);
 
-const resendForgotPasswordUseCase = new ResendForgotPasswordUseCase(
-  passwordResetStore,
-  otpService,
-  emailJobQueue,
-  appLogger,
-);
 
-const verifyForgotPasswordUseCase = new VerifyForgotPasswordUseCase(
-  passwordResetStore,
-  otpService,
-  tokenService,
-  appLogger,
-);
 
-const resetPasswordUseCase = new ResetPasswordUseCase(
-  tokenService,
-  passwordResetStore,
-  passwordHasher,
-  userRepository,
-  appLogger,
-);
 
-const registerUserUseCase = new RegisterUserUseCase(
-  userRepository,
-  passwordHasher,
-  otpService,
-  registrationStore,
-  appLogger,
-  emailJobQueue,
-);
 
 const checkLoginDeviceUseCase = new CheckLoginDeviceUseCase(
   trustedDeviceRepository,
@@ -339,8 +348,42 @@ const createLoginVerificationUseCase = new CreateLoginVerificationUseCase(
   emailService,
 );
 
-const loginUserUseCase = new LoginUserUseCase(
-  userRepository,
+
+
+
+
+// -----------------------------------------------------
+// User Use Cases
+// -----------------------------------------------------
+
+
+
+
+// -----------------------------------------------------
+// Container
+// -----------------------------------------------------
+
+
+// -----------------------------------------------------
+// CQRS handler registrations
+// -----------------------------------------------------
+
+commandBus.register(
+  RegisterUserCommand.COMMAND_TYPE,
+  new RegisterUserCommandHandler(
+userRepository,
+  passwordHasher,
+  otpService,
+  registrationStore,
+  appLogger,
+  emailJobQueue,
+  ),
+);
+
+commandBus.register(
+  LoginUserCommand.COMMAND_TYPE,
+  new LoginUserCommandHandler(
+userRepository,
   passwordHasher,
   tokenService,
   refreshTokenSessionRepository,
@@ -348,54 +391,185 @@ const loginUserUseCase = new LoginUserUseCase(
   appLogger,
   checkLoginDeviceUseCase,
   createLoginVerificationUseCase,
+  ),
 );
 
-const refreshTokenUseCase = new RefreshTokenUseCase(
-  tokenService,
+commandBus.register(
+  RefreshTokenCommand.COMMAND_TYPE,
+  new RefreshTokenCommandHandler(
+tokenService,
   refreshTokenSessionRepository,
   appLogger,
+  ),
 );
 
-const logoutUseCase = new LogoutUseCase(
-  tokenService,
+commandBus.register(
+  LogoutCommand.COMMAND_TYPE,
+  new LogoutCommandHandler(
+tokenService,
   refreshTokenSessionRepository,
   appLogger,
+  ),
 );
 
-const verifyLoginOtpUseCase = new VerifyLoginOtpUseCase(
-  pendingLoginStore,
+commandBus.register(
+  VerifyEmailCommand.COMMAND_TYPE,
+  new VerifyEmailCommandHandler(
+userRepository,
+  registrationStore,
+  otpService,
+  appLogger,
+  unitOfWork,
+  trustedDeviceRepository,
+  ),
+);
+
+commandBus.register(
+  ResendVerificationCommand.COMMAND_TYPE,
+  new ResendVerificationCommandHandler(
+registrationStore,
+  otpService,
+  emailService,
+  appLogger,
+  ),
+);
+
+commandBus.register(
+  RequestForgotPasswordCommand.COMMAND_TYPE,
+  new RequestForgotPasswordCommandHandler(
+userRepository,
+  passwordResetStore,
+  otpService,
+  appLogger,
+  emailJobQueue,
+  ),
+);
+
+commandBus.register(
+  ResendForgotPasswordCommand.COMMAND_TYPE,
+  new ResendForgotPasswordCommandHandler(
+passwordResetStore,
+  otpService,
+  emailJobQueue,
+  appLogger,
+  ),
+);
+
+commandBus.register(
+  VerifyForgotPasswordCommand.COMMAND_TYPE,
+  new VerifyForgotPasswordCommandHandler(
+passwordResetStore,
+  otpService,
+  tokenService,
+  appLogger,
+  ),
+);
+
+commandBus.register(
+  ResetPasswordCommand.COMMAND_TYPE,
+  new ResetPasswordCommandHandler(
+tokenService,
+  passwordResetStore,
+  passwordHasher,
+  userRepository,
+  appLogger,
+  ),
+);
+
+commandBus.register(
+  VerifyLoginOtpCommand.COMMAND_TYPE,
+  new VerifyLoginOtpCommandHandler(
+pendingLoginStore,
   otpService,
   tokenService,
   refreshTokenSessionRepository,
   trustedDeviceRepository,
   appLogger,
+  ),
 );
 
-// -----------------------------------------------------
-// User Use Cases
-// -----------------------------------------------------
-
-const getCurrentUserUseCase = new GetCurrentUserUseCase(
-  userRepository,
-  authorizationService,
-  appLogger,
+queryBus.register(
+  GetCurrentUserQuery.QUERY_TYPE,
+  new GetCurrentUserQueryHandler(
+userReader, appLogger
+  ),
 );
 
-const getAllUsersUseCase = new GetAllUsersUseCase(
-  userRepository,
-  authorizationService,
-  appLogger,
+queryBus.register(
+  GetAllUsersQuery.QUERY_TYPE,
+  new GetAllUsersQueryHandler(
+userReader, appLogger
+  ),
 );
 
-const getUserByIdUseCase = new GetUserByIdUseCase(
-  userRepository,
-  authorizationService,
-  appLogger,
+queryBus.register(
+  GetUserByIdQuery.QUERY_TYPE,
+  new GetUserByIdQueryHandler(
+userReader, appLogger
+  ),
 );
 
-// -----------------------------------------------------
-// Container
-// -----------------------------------------------------
+commandBus.register(
+  AssignRoleToUserCommand.COMMAND_TYPE,
+  new AssignRoleToUserCommandHandler(
+userRepository,
+  roleRepository,
+  userRoleRepository,
+  authorizationCache,
+  unitOfWork,
+  ),
+);
+
+commandBus.register(
+  RemoveRoleFromUserCommand.COMMAND_TYPE,
+  new RemoveRoleFromUserCommandHandler(
+userRepository,
+  roleRepository,
+  userRoleRepository,
+  authorizationCache,
+  unitOfWork,
+  ),
+);
+
+queryBus.register(
+  GetUserRolesQuery.QUERY_TYPE,
+  new GetUserRolesQueryHandler(
+userRoleRepository,
+  roleRepository,
+  ),
+);
+
+commandBus.register(
+  AssignPermissionToRoleCommand.COMMAND_TYPE,
+  new AssignPermissionToRoleCommandHandler(
+rolePermissionRepository,
+  userRoleRepository,
+  authorizationCache,
+  ),
+);
+
+commandBus.register(
+  RemovePermissionFromRoleCommand.COMMAND_TYPE,
+  new RemovePermissionFromRoleCommandHandler(
+rolePermissionRepository,
+  userRoleRepository,
+  authorizationCache,
+  ),
+);
+
+queryBus.register(
+  GetRolePermissionsQuery.QUERY_TYPE,
+  new GetRolePermissionsQueryHandler(
+rolePermissionRepository,
+  ),
+);
+
+queryBus.register(
+  GetAllPermissionsQuery.QUERY_TYPE,
+  new GetAllPermissionsQueryHandler(
+permissionRepository,
+  ),
+);
 
 export const container = {
   // Infrastructure
@@ -429,26 +603,16 @@ export const container = {
   logger: appLogger,
 
   // Auth
-  registerUserUseCase,
-  loginUserUseCase,
-  logoutUseCase,
-  refreshTokenUseCase,
-  verifyEmailUseCase,
-  resendVerificationUseCase,
 
   // Forgot password
-  requestForgotPasswordUseCase,
-  resendForgotPasswordUseCase,
-  verifyForgotPasswordUseCase,
-  resetPasswordUseCase,
 
   // Login OTP
-  verifyLoginOtpUseCase,
 
   // User
-  getCurrentUserUseCase,
-  getAllUsersUseCase,
-  getUserByIdUseCase,
+  userReader,
+  readModelSynchronizer,
+  mongoClient,
+  mongoDatabase,
 
   //inbox
   inboxRepository,
@@ -466,16 +630,8 @@ export const container = {
   rolePermissionRepository,
   authorizationRepository,
   authorizationService,
-  createRoleUseCase,
-  getRoleUseCase,
-  getAllRolesUseCase,
-  updateRoleUseCase,
-  deleteRoleUseCase,
+  commandBus,
+  queryBus,
   permissionSynchronizer,
-  assignPermissionToRoleUseCase,
-  removePermissionFromRoleUseCase,
-  getRolePermissionsUseCase,
-  assignRoleToUserUseCase,
-  removeRoleFromUserUseCase,
   userRoleRepository,
 };

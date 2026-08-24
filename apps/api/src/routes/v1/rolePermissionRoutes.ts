@@ -9,11 +9,8 @@ export async function rolePermissionRoutes(
   app: FastifyInstance,
 ): Promise<void> {
   const controller = new RolePermissionController(
-    container.assignPermissionToRoleUseCase,
-    container.removePermissionFromRoleUseCase,
-    container.getRolePermissionsUseCase,
-    container.getRoleUseCase,
-  );
+    container.commandBus,
+    container.queryBus,);
 
   app.post<{
     Params: {

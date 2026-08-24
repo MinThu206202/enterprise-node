@@ -1,15 +1,15 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { AssignRoleToUserUseCase } from "../../../../src/application/use-cases/userRoles/AssignRoleToUserUseCase.js";
-import { RemoveRoleFromUserUseCase } from "../../../../src/application/use-cases/userRoles/RemoveRoleFromUserUseCase.js";
-import type { IUserRoleRepository } from "../../../../src/domain/repositories/IUserRoleRepository.js";
-import type { IRoleRepository } from "../../../../src/domain/repositories/IRoleRepository.js";
+
+import { AssignRoleToUserCommand } from "../../../../src/application/commands/userRoles/AssignRoleToUserCommand.js";
+import { RemoveRoleFromUserCommand } from "../../../../src/application/commands/userRoles/RemoveRoleFromUserCommand.js";
+import { GetUserRolesQuery } from "../../../../src/application/queries/userRoles/GetUserRolesQuery.js";
+import type { CommandBus } from "../../../../src/application/bus/CommandBus.js";
+import type { QueryBus } from "../../../../src/application/bus/QueryBus.js";
 
 export class UserRoleController {
   constructor(
-    private readonly assignRoleToUserUseCase: AssignRoleToUserUseCase,
-    private readonly removeRoleFromUserUseCase: RemoveRoleFromUserUseCase,
-    private readonly userRoleRepository: IUserRoleRepository,
-    private readonly roleRepository: IRoleRepository,
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
   ) {}
 
   async assign(
@@ -21,10 +21,10 @@ export class UserRoleController {
     }>,
     reply: FastifyReply,
   ): Promise<void> {
-    await this.assignRoleToUserUseCase.execute({
+    await this.commandBus.execute(new AssignRoleToUserCommand({
       userId: request.params.userId,
       roleId: request.params.roleId,
-    });
+    }));
 
     const roles = await this.getUserRoles(request.params.userId);
 
@@ -44,10 +44,10 @@ export class UserRoleController {
     }>,
     reply: FastifyReply,
   ): Promise<void> {
-    await this.removeRoleFromUserUseCase.execute({
+    await this.commandBus.execute(new RemoveRoleFromUserCommand({
       userId: request.params.userId,
       roleId: request.params.roleId,
-    });
+    }));
 
     const roles = await this.getUserRoles(request.params.userId);
 
@@ -58,18 +58,22 @@ export class UserRoleController {
     });
   }
 
-  private async getUserRoles(userId: string) {
-    const roleIds = await this.userRoleRepository.findRolesByUserId(userId);
-    const roles = await Promise.all(
-      roleIds.map((id) => this.roleRepository.findById(id)),
-    );
+  async getByUser(
+    request: FastifyRequest<{
+      Params: {
+        userId: string;
+      };
+    }>,
+    reply: FastifyReply,
+  ): Promise<void> {
+    const roles = await this.queryBus.execute(new GetUserRolesQuery(
+      request.params.userId,
+    ));
 
-    return roles
-      .filter(Boolean)
-      .map((role) => ({
-        id: role!.id,
-        name: role!.name,
-        description: role!.description,
-      }));
+    return reply.status(200).send(roles);
+  }
+
+  private async getUserRoles(userId: string) {
+    return this.queryBus.execute(new GetUserRolesQuery(userId));
   }
 }

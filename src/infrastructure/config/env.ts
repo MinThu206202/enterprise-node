@@ -14,6 +14,9 @@ const envSchema = z.object({
 
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
 
+  MONGODB_URL: z.string().min(1),
+  MONGODB_DB: z.string().min(1),
+
   LOG_LEVEL: z
     .enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"])
     .default("info"),

@@ -1,3 +1,4 @@
+
 declare module "fastify" {
   interface FastifyContextConfig {
     resource?: string;

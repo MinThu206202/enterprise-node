@@ -6,6 +6,7 @@ import type { ITransactionContext } from "../../application/services/database/IT
 
 import { PrismaUserRepository } from "../repositories/PrismaUserRepository.js";
 import { PrismaOutboxRepository } from "../outbox/PrismaOutboxRepository.js";
+import { PrismaRolePermissionRepository } from "../repositories/PrismaRolePermissionRepository.js";
 import { PrismaRoleRepository } from "../repositories/PrismaRoleRepository.js";
 import { PrismaUserRoleRepository } from "../repositories/PrismaUserRoleRepository.js";
 
@@ -21,6 +22,7 @@ export class PrismaUnitOfWork implements IUnitOfWork {
         outboxRepository: new PrismaOutboxRepository(tx),
         roleRepository: new PrismaRoleRepository(tx),
         userRoleRepository: new PrismaUserRoleRepository(tx),
+        rolePermissionRepository: new PrismaRolePermissionRepository(tx),
       };
 
       return callback(context);

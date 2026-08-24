@@ -1,5 +1,18 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 
+import { RegisterUserCommand } from "../../../../src/application/commands/auth/RegisterUserCommand.js";
+import { LoginUserCommand } from "../../../../src/application/commands/auth/LoginUserCommand.js";
+import { RefreshTokenCommand } from "../../../../src/application/commands/auth/RefreshTokenCommand.js";
+import { LogoutCommand } from "../../../../src/application/commands/auth/LogoutCommand.js";
+import { VerifyEmailCommand } from "../../../../src/application/commands/auth/VerifyEmailCommand.js";
+import { ResendVerificationCommand } from "../../../../src/application/commands/auth/ResendVerificationCommand.js";
+import { RequestForgotPasswordCommand } from "../../../../src/application/commands/auth/RequestForgotPasswordCommand.js";
+import { ResendForgotPasswordCommand } from "../../../../src/application/commands/auth/ResendForgotPasswordCommand.js";
+import { VerifyForgotPasswordCommand } from "../../../../src/application/commands/auth/VerifyForgotPasswordCommand.js";
+import { ResetPasswordCommand } from "../../../../src/application/commands/auth/ResetPasswordCommand.js";
+import { VerifyLoginOtpCommand } from "../../../../src/application/commands/auth/VerifyLoginOtpCommand.js";
+import type { CommandBus } from "../../../../src/application/bus/CommandBus.js";
+
 import {
   registerSchema,
   type RegisterInput,
@@ -10,22 +23,16 @@ import {
   type VerifyEmailInput,
 } from "../../../../src/application/validation/auth/verifyEmailSchema.js";
 
-import type { VerifyEmailUseCase } from "../../../../src/application/use-cases/auth/VerifyEmailUseCase.js";
 
 import {
   loginSchema,
   type LoginInput,
 } from "../../../../src/application/validation/auth/loginSchema.js";
 
-import type { LoginUserUseCase } from "../../../../src/application/use-cases/auth/LoginUserUseCase.js";
-import type { LogoutUseCase } from "../../../../src/application/use-cases/auth/LogoutUseCase.js";
 
-import type { RegisterUserUseCase } from "../../../../src/application/use-cases/auth/RegisterUserUseCase.js";
 
 import { ValidationError } from "../../../../src/shared/errors/ValidationError.js";
-import { RefreshTokenUseCase } from "../../../../src/application/use-cases/auth/RefreshTokenUseCase.js";
 import { resendVerificationSchema } from "../../../../src/application/validation/auth/resendVerificationSchema.js";
-import { ResendVerificationUseCase } from "../../../../src/application/use-cases/auth/ResendVerificationUseCase.js";
 
 import {
   requestForgotPasswordSchema,
@@ -44,26 +51,11 @@ import {
   type ResetPasswordInput,
 } from "../../../../src/application/validation/auth/resetPasswordSchema.js";
 
-import type { RequestForgotPasswordUseCase } from "../../../../src/application/use-cases/auth/RequestForgotPasswordUseCase.js";
-import type { ResendForgotPasswordUseCase } from "../../../../src/application/use-cases/auth/ResendForgotPasswordUseCase.js";
-import type { VerifyForgotPasswordUseCase } from "../../../../src/application/use-cases/auth/VerifyForgotPasswordUseCase.js";
-import type { ResetPasswordUseCase } from "../../../../src/application/use-cases/auth/ResetPasswordUseCase.js";
 import { verifyLoginOtpSchema } from "../../../../src/application/validation/auth/verifyLoginOtpSchema.js";
-import type { VerifyLoginOtpUseCase } from "../../../../src/application/use-cases/auth/VerifyLoginOtpUseCase.js";
 
 export class AuthController {
   constructor(
-    private readonly registerUserUseCase: RegisterUserUseCase,
-    private readonly loginUserUseCase: LoginUserUseCase,
-    private readonly refreshTokenUseCase: RefreshTokenUseCase,
-    private readonly logoutUseCase: LogoutUseCase,
-    private readonly verifyEmailUseCase: VerifyEmailUseCase,
-    private readonly resendVerificationUseCase: ResendVerificationUseCase,
-    private readonly requestForgotPasswordUseCase: RequestForgotPasswordUseCase,
-    private readonly resendForgotPasswordUseCase: ResendForgotPasswordUseCase,
-    private readonly verifyForgotPasswordUseCase: VerifyForgotPasswordUseCase,
-    private readonly resetPasswordUseCase: ResetPasswordUseCase,
-    private readonly verifyLoginOtpUseCase: VerifyLoginOtpUseCase,
+    private readonly commandBus: CommandBus,
   ) {}
 
   async register(
@@ -78,7 +70,7 @@ export class AuthController {
       );
     }
 
-    const registration = await this.registerUserUseCase.execute(result.data);
+    const registration = await this.commandBus.execute(new RegisterUserCommand(result.data));
 
     return reply.status(201).send({
       verificationId: registration.verificationId,
@@ -104,7 +96,7 @@ export class AuthController {
       deviceInfo: request.headers["user-agent"] ?? null,
     };
 
-    const tokens = await this.loginUserUseCase.execute(result.data, context);
+    const tokens = await this.commandBus.execute(new LoginUserCommand(result.data, context));
 
     return reply.status(200).send(tokens);
   }
@@ -118,9 +110,9 @@ export class AuthController {
       throw new ValidationError("Refresh token is required");
     }
 
-    const result = await this.refreshTokenUseCase.execute({
+    const result = await this.commandBus.execute(new RefreshTokenCommand({
       refreshToken: body.refreshToken,
-    });
+    }));
 
     return reply.status(200).send(result);
   }
@@ -133,9 +125,9 @@ export class AuthController {
       throw new ValidationError("Refresh token is required");
     }
 
-    await this.logoutUseCase.execute({
+    await this.commandBus.execute(new LogoutCommand({
       refreshToken: body.refreshToken,
-    });
+    }));
 
     return reply.status(200).send({ message: "Logged out successfully" });
   }
@@ -156,7 +148,7 @@ export class AuthController {
       deviceInfo: request.headers["user-agent"] ?? null,
     };
 
-    const user = await this.verifyEmailUseCase.execute(input, context);
+    const user = await this.commandBus.execute(new VerifyEmailCommand(input, context));
 
     return reply.status(200).send(user);
   }
@@ -170,9 +162,9 @@ export class AuthController {
       );
     }
 
-    const resultData = await this.resendVerificationUseCase.execute(
+    const resultData = await this.commandBus.execute(new ResendVerificationCommand(
       result.data,
-    );
+    ));
     return reply.status(200).send(resultData);
   }
 
@@ -188,7 +180,7 @@ export class AuthController {
       );
     }
 
-    const data = await this.requestForgotPasswordUseCase.execute(result.data);
+    const data = await this.commandBus.execute(new RequestForgotPasswordCommand(result.data));
 
     return reply.status(200).send(data);
   }
@@ -205,7 +197,7 @@ export class AuthController {
       );
     }
 
-    const data = await this.resendForgotPasswordUseCase.execute(result.data);
+    const data = await this.commandBus.execute(new ResendForgotPasswordCommand(result.data));
 
     return reply.status(200).send(data);
   }
@@ -222,7 +214,7 @@ export class AuthController {
       );
     }
 
-    const data = await this.verifyForgotPasswordUseCase.execute(result.data);
+    const data = await this.commandBus.execute(new VerifyForgotPasswordCommand(result.data));
 
     return reply.status(200).send(data);
   }
@@ -239,7 +231,7 @@ export class AuthController {
       );
     }
 
-    const data = await this.resetPasswordUseCase.execute(result.data);
+    const data = await this.commandBus.execute(new ResetPasswordCommand(result.data));
 
     return reply.status(200).send(data);
   }
@@ -247,7 +239,7 @@ export class AuthController {
   async verifyLoginOtp(request: FastifyRequest, reply: FastifyReply) {
     const input = verifyLoginOtpSchema.parse(request.body);
 
-    const result = await this.verifyLoginOtpUseCase.execute(input);
+    const result = await this.commandBus.execute(new VerifyLoginOtpCommand(input));
 
     return reply.status(200).send(result);
   }

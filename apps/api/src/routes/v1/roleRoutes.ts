@@ -7,11 +7,8 @@ import { permissionGuard } from "../../hooks/permissionGuard.js";
 
 export async function roleRoutes(app: FastifyInstance): Promise<void> {
   const controller = new RoleController(
-    container.createRoleUseCase,
-    container.getRoleUseCase,
-    container.getAllRolesUseCase,
-    container.updateRoleUseCase,
-    container.deleteRoleUseCase,
+    container.commandBus,
+    container.queryBus,
   );
 
   app.post(

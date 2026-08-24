@@ -6,6 +6,7 @@ export class RoleMapper {
     return Role.create({
       id: data.id,
       name: data.name,
+      version: data.version,
       description: data.description,
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
@@ -17,6 +18,7 @@ export class RoleMapper {
     return {
       id: role.id,
       name: role.name,
+      version: role.version,
       description: role.description,
       createdAt: role.createdAt,
       updatedAt: role.updatedAt,

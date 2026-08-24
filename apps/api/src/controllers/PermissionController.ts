@@ -1,21 +1,17 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 
-import type { IPermissionRepository } from "../../../../src/domain/repositories/IPermissionRepository.js";
+import { GetAllPermissionsQuery } from "../../../../src/application/queries/rolePermissions/GetAllPermissionsQuery.js";
+import type { QueryBus } from "../../../../src/application/bus/QueryBus.js";
+
 
 export class PermissionController {
   constructor(
-    private readonly permissionRepository: IPermissionRepository,
+    private readonly queryBus: QueryBus,
   ) {}
 
   async getAll(_request: FastifyRequest, reply: FastifyReply) {
-    const permissions = await this.permissionRepository.findAll();
+    const permissions = await this.queryBus.execute(new GetAllPermissionsQuery());
 
-    return reply.status(200).send(
-      permissions.map((p) => ({
-        id: p.id,
-        name: p.name,
-        description: p.description,
-      })),
-    );
+    return reply.status(200).send(permissions);
   }
 }

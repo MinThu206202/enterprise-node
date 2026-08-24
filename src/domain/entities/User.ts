@@ -2,6 +2,7 @@ export interface UserProps {
   id: string;
   email: string;
   name: string;
+  version: number;
   passwordHash: string;
   createdAt: Date;
   updatedAt: Date;
@@ -39,7 +40,15 @@ export class User {
     return this.props.deletedAt;
   }
 
+  getVersion(): number {
+    return this.props.version;
+  }
+
   isDeleted(): boolean {
     return this.props.deletedAt !== null;
+  }
+
+  get version(): number {
+    return this.props.version;
   }
 }

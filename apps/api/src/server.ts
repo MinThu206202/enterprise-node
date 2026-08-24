@@ -5,9 +5,12 @@ import { env } from "../../../src/infrastructure/config/env.js";
 import {
   rabbitMQClient,
   welcomeEmailConsumer,
+  userReadModelConsumer,
   outboxWorker,
   emailWorker,
   permissionSynchronizer,
+  readModelSynchronizer,
+  mongoClient,
 } from "./container.js";
 
 const app = await createApp();
@@ -17,8 +20,15 @@ async function bootstrap() {
     // ---------------------------------------------
     // Synchronize permissions
     // ---------------------------------------------
+    await mongoClient.connect();
 
     await permissionSynchronizer.synchronize();
+
+    // ---------------------------------------------
+    // Synchronize Mongo read models
+    // ---------------------------------------------
+
+    await readModelSynchronizer.synchronize();
 
     // ---------------------------------------------
     // Connect RabbitMQ
@@ -31,6 +41,12 @@ async function bootstrap() {
     // ---------------------------------------------
 
     await welcomeEmailConsumer.start();
+
+    // ---------------------------------------------
+    // Start User read-model consumer
+    // ---------------------------------------------
+
+    await userReadModelConsumer.start();
 
     // ---------------------------------------------
     // Start Outbox worker
