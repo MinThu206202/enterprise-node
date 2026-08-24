@@ -266,7 +266,7 @@ const userRoleRepository = new PrismaUserRoleRepository(prisma);
 
 commandBus.register(
   CreateRoleCommand.COMMAND_TYPE,
-  new CreateRoleCommandHandler(roleRepository),
+  new CreateRoleCommandHandler(roleRepository, unitOfWork),
 );
 
 commandBus.register(
@@ -275,6 +275,7 @@ commandBus.register(
     roleRepository,
     userRoleRepository,
     authorizationCache,
+    unitOfWork,
   ),
 );
 
@@ -284,6 +285,7 @@ commandBus.register(
     roleRepository,
     userRoleRepository,
     authorizationCache,
+    unitOfWork,
   ),
 );
 
@@ -542,18 +544,23 @@ userRoleRepository,
 commandBus.register(
   AssignPermissionToRoleCommand.COMMAND_TYPE,
   new AssignPermissionToRoleCommandHandler(
-rolePermissionRepository,
-  userRoleRepository,
-  authorizationCache,
+    rolePermissionRepository,
+    userRoleRepository,
+    authorizationCache,
+    permissionRepository,
+    roleRepository,
+    unitOfWork,
   ),
 );
 
 commandBus.register(
   RemovePermissionFromRoleCommand.COMMAND_TYPE,
   new RemovePermissionFromRoleCommandHandler(
-rolePermissionRepository,
-  userRoleRepository,
-  authorizationCache,
+    rolePermissionRepository,
+    userRoleRepository,
+    authorizationCache,
+    permissionRepository,
+    unitOfWork,
   ),
 );
 
