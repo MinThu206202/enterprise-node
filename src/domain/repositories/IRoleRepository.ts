@@ -1,5 +1,5 @@
-import { CreateRoleInput } from "../../application/dto/roles/CreateRoleInput.js";
-import { UpdateRoleInput } from "../../application/dto/roles/UpdateRoleInput.js";
+import { CreateRoleInput } from "../../application/modules/roles/dto/CreateRoleInput.js";
+import { UpdateRoleInput } from "../../application/modules/roles/dto/UpdateRoleInput.js";
 import { Role } from "../entities/Role.js";
 
 export interface IRoleRepository {

@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 
-import type { IEmailService } from "../../application/services/registration/IEmailService.js";
+import type { IEmailService } from "../../application/ports/registration/IEmailService.js";
 
 import { renderVerificationEmail } from "./templates/verification-email.js";
 

@@ -2,7 +2,7 @@ import "dotenv/config";
 
 import { MongoClient } from "mongodb";
 
-import { prisma } from "../src/infrastructure/database/prisma/PrismaClient.js";
+import { prisma } from "../src/infrastructure/persistence/prisma/PrismaClient.js";
 
 const MONGODB_URL = process.env.MONGODB_URL ?? "mongodb://localhost:27017";
 const MONGODB_DB = process.env.MONGODB_DB ?? "enterprise_read";

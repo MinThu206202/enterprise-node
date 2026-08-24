@@ -1,4 +1,4 @@
-import type { IMessagePublisher } from "../../../application/services/messaging/IMessagePublisher.js";
+import type { IMessagePublisher } from "../../../application/ports/messaging/IMessagePublisher.js";
 
 import { rabbitmqClient } from "./rabbitmqClient.js";
 

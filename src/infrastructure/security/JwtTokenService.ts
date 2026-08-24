@@ -7,7 +7,7 @@ import type {
   GeneratedPasswordResetToken,
   PasswordResetTokenPayload,
   ITokenService,
-} from "../../application/services/auth/ITokenService.js";
+} from "../../application/ports/auth/ITokenService.js";
 
 import { ConfigService } from "../config/ConfigService.js";
 

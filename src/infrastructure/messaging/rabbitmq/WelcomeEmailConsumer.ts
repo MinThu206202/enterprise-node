@@ -1,4 +1,4 @@
-import type { IEmailService } from "../../../application/services/registration/IEmailService.js";
+import type { IEmailService } from "../../../application/ports/registration/IEmailService.js";
 import type { IInboxRepository } from "../../../domain/repositories/IInboxRepository.js";
 import type { ILogger } from "../../../shared/logging/ILogger.js";
 import { rabbitmqClient } from "./rabbitmqClient.js";

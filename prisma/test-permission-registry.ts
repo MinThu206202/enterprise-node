@@ -1,7 +1,7 @@
 import {
   PermissionAction,
   PermissionRegistry,
-} from "../src/application/services/authorization/PermissionRegistry.js";
+} from "../src/application/modules/authorization/PermissionRegistry.js";
 
 const registry = new PermissionRegistry();
 

@@ -2,7 +2,7 @@ import {
   IEmailJobQueue,
   SendVerificationEmailJob,
   SendPasswordResetEmailJob,
-} from "../../../application/services/queue/IEmailJobQueue.js";
+} from "../../../application/ports/queue/IEmailJobQueue.js";
 import { rabbitmqClient } from "./rabbitmqClient.js";
 
 const EMAIL_EXCHANGE = "enterprise.email";
