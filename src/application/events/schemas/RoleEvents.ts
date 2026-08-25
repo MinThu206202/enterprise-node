@@ -43,3 +43,9 @@ export const roleDeletedEventSchema = z.object({
     version: z.number().int().positive(),
   }),
 });
+
+export type RoleCreatedEvent = z.infer<typeof roleCreatedEventSchema>;
+
+export type RoleUpdatedEvent = z.infer<typeof roleUpdatedEventSchema>;
+
+export type RoleDeletedEvent = z.infer<typeof roleDeletedEventSchema>;

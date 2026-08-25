@@ -13,19 +13,13 @@ export class AuthorizationService implements IAuthorizationService {
     const cachedAuthorization = await this.authorizationCache.get(userId);
 
     if (cachedAuthorization) {
-      console.log(`[AUTH CACHE] HIT userId=${userId}`);
-
       return cachedAuthorization;
     }
-
-    console.log(`[AUTH CACHE] MISS userId=${userId}`);
 
     const authorization =
       await this.authorizationRepository.getUserAuthorization(userId);
 
     await this.authorizationCache.set(userId, authorization);
-
-    console.log(`[AUTH CACHE] SET userId=${userId}`);
 
     return authorization;
   }

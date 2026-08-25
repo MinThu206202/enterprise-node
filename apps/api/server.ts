@@ -6,6 +6,7 @@ import {
   rabbitMQClient,
   welcomeEmailConsumer,
   userReadModelConsumer,
+  roleReadModelConsumer,
   outboxWorker,
   emailWorker,
   permissionSynchronizer,
@@ -47,6 +48,12 @@ async function bootstrap() {
     // ---------------------------------------------
 
     await userReadModelConsumer.start();
+
+    // ---------------------------------------------
+    // Start Role read-model consumer
+    // ---------------------------------------------
+
+    await roleReadModelConsumer.start();
 
     // ---------------------------------------------
     // Start Outbox worker

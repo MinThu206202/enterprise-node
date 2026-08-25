@@ -1,16 +1,24 @@
-import type { IRolePermissionRepository } from "../../../../domain/repositories/IRolePermissionRepository.js";
+import type { IRoleReader } from "../../../../domain/repositories/IRoleReader.js";
+import type { IPermissionReader } from "../../../../domain/repositories/IPermissionReader.js";
 import type { RolePermissionResponseDto } from "../dto/RolePermissionResponseDto.js";
 import type { IQueryHandler } from "../../../bus/IQuery.js";
 import type { GetRolePermissionsQuery } from "./GetRolePermissionsQuery.js";
 
 export class GetRolePermissionsQueryHandler implements IQueryHandler<GetRolePermissionsQuery, RolePermissionResponseDto[]> {
   constructor(
-    private readonly rolePermissionRepository: IRolePermissionRepository,
+    private readonly roleReader: IRoleReader,
+    private readonly permissionReader: IPermissionReader,
   ) {}
 
-  private async handle(roleId: string): Promise<RolePermissionResponseDto[]> {
+  async execute(query: GetRolePermissionsQuery): Promise<RolePermissionResponseDto[]> {
+    const role = await this.roleReader.findById(query.roleId);
+
+    if (!role || role.permissions.length === 0) {
+      return [];
+    }
+
     const permissions =
-      await this.rolePermissionRepository.findPermissionsByRoleId(roleId);
+      await this.permissionReader.findByNames(role.permissions);
 
     return permissions.map((permission) => ({
       id: permission.id,
@@ -19,9 +27,5 @@ export class GetRolePermissionsQueryHandler implements IQueryHandler<GetRolePerm
       createdAt: permission.createdAt,
       updatedAt: permission.updatedAt,
     }));
-  }
-
-  async execute(command: GetRolePermissionsQuery): Promise<RolePermissionResponseDto[]> {
-    return this.handle(command.roleId);
   }
 }

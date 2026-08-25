@@ -11,7 +11,7 @@ import type { VerifyEmailInput } from "../validation/verifyEmailSchema.js";
 import { UnauthorizedError } from "../../../../shared/errors/UnauthorizedError.js";
 import { ConflictError } from "../../../../shared/errors/ConflictError.js";
 import type { IUnitOfWork } from "../../../ports/database/IUnitOfWork.js";
-import { AUTH_EVENTS } from "../../../events/AuthEvents.js";
+import { EVENT_TYPES } from "../../../events/EventTypes.js";
 
 import { randomUUID } from "node:crypto";
 
@@ -123,11 +123,11 @@ export class VerifyEmailCommandHandler implements ICommandHandler<VerifyEmailCom
         const eventId = randomUUID();
 
         await tx.outboxRepository.create({
-          type: AUTH_EVENTS.USER_REGISTERED,
+          type: EVENT_TYPES.USER_REGISTERED,
           payload: {
             eventId,
             messageId,
-            eventType: AUTH_EVENTS.USER_REGISTERED,
+            eventType: EVENT_TYPES.USER_REGISTERED,
             eventVersion: 1,
 
             aggregateId: user.getId(),
