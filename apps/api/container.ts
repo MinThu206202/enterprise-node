@@ -81,7 +81,11 @@ import { rabbitmqClient } from "../../src/infrastructure/messaging/rabbitmq/rabb
 import { RabbitMQPublisher } from "../../src/infrastructure/messaging/rabbitmq/RabbitMQPublisher.js";
 import { WelcomeEmailConsumer } from "../../src/infrastructure/messaging/rabbitmq/WelcomeEmailConsumer.js";
 import { UserReadModelConsumer } from "../../src/infrastructure/messaging/rabbitmq/UserReadModelConsumer.js";
+import { RoleReadModelConsumer } from "../../src/infrastructure/messaging/rabbitmq/RoleReadModelConsumer.js";
 import { MongoUserProjector } from "../../src/infrastructure/persistence/mongodb/read-models/MongoUserProjector.js";
+import { MongoRoleProjector } from "../../src/infrastructure/persistence/mongodb/read-models/MongoRoleProjector.js";
+import { MongoRoleReader } from "../../src/infrastructure/persistence/mongodb/read-models/MongoRoleReader.js";
+import { MongoPermissionReader } from "../../src/infrastructure/persistence/mongodb/read-models/MongoPermissionReader.js";
 
 // Outbox
 import { OutboxWorker } from "../../src/application/workers/OutboxWorker.js";
@@ -129,6 +133,10 @@ export const mongoClient = getMongoClient();
 const mongoDatabase = new MongoDatabase(mongoClient);
 
 const userReader = new MongoUserReader(mongoDatabase);
+
+const roleReader = new MongoRoleReader(mongoDatabase);
+
+const permissionReader = new MongoPermissionReader(mongoDatabase);
 
 export const readModelSynchronizer = new MongoReadModelSynchronizer(
   prisma,
@@ -235,6 +243,19 @@ export const userReadModelConsumer = new UserReadModelConsumer(
 );
 
 // -----------------------------------------------------
+// Role Read Model Projection
+// -----------------------------------------------------
+
+const mongoRoleProjector = new MongoRoleProjector(mongoDatabase);
+
+export const roleReadModelConsumer = new RoleReadModelConsumer(
+  rabbitMQClient,
+  mongoRoleProjector,
+  inboxRepository,
+  appLogger,
+);
+
+// -----------------------------------------------------
 // Role
 // -----------------------------------------------------
 const roleRepository = new PrismaRoleRepository(prisma);
@@ -291,12 +312,12 @@ commandBus.register(
 
 queryBus.register(
   GetRoleQuery.QUERY_TYPE,
-  new GetRoleQueryHandler(roleRepository),
+  new GetRoleQueryHandler(roleReader),
 );
 
 queryBus.register(
   GetAllRolesQuery.QUERY_TYPE,
-  new GetAllRolesQueryHandler(roleRepository),
+  new GetAllRolesQueryHandler(roleReader),
 );
 
 
@@ -535,10 +556,7 @@ userRepository,
 
 queryBus.register(
   GetUserRolesQuery.QUERY_TYPE,
-  new GetUserRolesQueryHandler(
-userRoleRepository,
-  roleRepository,
-  ),
+  new GetUserRolesQueryHandler(userReader, roleReader),
 );
 
 commandBus.register(
@@ -566,16 +584,12 @@ commandBus.register(
 
 queryBus.register(
   GetRolePermissionsQuery.QUERY_TYPE,
-  new GetRolePermissionsQueryHandler(
-rolePermissionRepository,
-  ),
+  new GetRolePermissionsQueryHandler(roleReader, permissionReader),
 );
 
 queryBus.register(
   GetAllPermissionsQuery.QUERY_TYPE,
-  new GetAllPermissionsQueryHandler(
-permissionRepository,
-  ),
+  new GetAllPermissionsQueryHandler(permissionReader),
 );
 
 export const container = {

@@ -48,8 +48,6 @@ export class MongoReadModelSynchronizer {
       },
     });
 
-    const permissionNames = new Set<string>();
-
     const rolesCollection = this.database.collection<{
       _id: string;
     }>("roles");
@@ -58,10 +56,6 @@ export class MongoReadModelSynchronizer {
       const permissions = (
         role.rolePermissions as unknown as RolePermissionRow[]
       ).map((row) => row.permission.name);
-
-      for (const name of permissions) {
-        permissionNames.add(name);
-      }
 
       await rolesCollection.updateOne(
         {
@@ -90,14 +84,22 @@ export class MongoReadModelSynchronizer {
       _id: string;
     }>("permissions");
 
-    for (const name of permissionNames) {
+    const permissions = await this.prisma.permission.findMany();
+
+    for (const permission of permissions) {
       await permissionsCollection.updateOne(
         {
-          _id: name,
+          _id: permission.name,
         },
         {
           $set: {
-            name,
+            id: permission.id,
+            name: permission.name,
+            description: permission.description,
+            updatedAt: permission.updatedAt,
+          },
+          $setOnInsert: {
+            createdAt: permission.createdAt,
           },
         },
         {

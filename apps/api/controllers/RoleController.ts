@@ -1,8 +1,6 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 
-import {
-  createRoleSchema,
-} from "../../../src/application/modules/roles/validation/createRoleSchema.js";
+import { createRoleSchema } from "../../../src/application/modules/roles/validation/createRoleSchema.js";
 import { updateRoleSchema } from "../../../src/application/modules/roles/validation/updateRoleSchema.js";
 
 import type { CommandBus } from "../../../src/application/bus/CommandBus.js";

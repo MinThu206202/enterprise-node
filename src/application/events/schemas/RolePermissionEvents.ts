@@ -28,3 +28,11 @@ export const rolePermissionRemovedEventSchema = z.object({
   occurredAt: z.iso.datetime(),
   payload: rolePermissionPayloadSchema,
 });
+
+export type RolePermissionAssignedEvent = z.infer<
+  typeof rolePermissionAssignedEventSchema
+>;
+
+export type RolePermissionRemovedEvent = z.infer<
+  typeof rolePermissionRemovedEventSchema
+>;
